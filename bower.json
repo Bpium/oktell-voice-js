@@ -17,6 +17,7 @@
     "*.js",
     "*.coffee",
     "*.html",
+    "package.json",
     "old"
   ],
   "dependencies": {
