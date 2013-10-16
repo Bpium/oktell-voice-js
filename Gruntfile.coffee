@@ -4,7 +4,7 @@ module.exports = (grunt)->
 
 	myConf =
 		build: 'build'
-		version: '0.1.0'
+		version: '0.1.1'
 
 	grunt.initConfig
 		myConf: myConf

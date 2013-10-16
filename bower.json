@@ -1,6 +1,6 @@
 {
   "name": "oktell-voice",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [
     "airato <airato.a@gmail.com>"
   ],
@@ -16,7 +16,8 @@
     "tests",
     "*.js",
     "*.coffee",
-    "*.html"
+    "*.html",
+    "old"
   ],
   "dependencies": {
     "oktelljs": "https://git.oktell.ru/web/oktelljs.git#0.1.1"

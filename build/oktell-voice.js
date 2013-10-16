@@ -1,4 +1,4 @@
-/* Oktell-voice.js version 0.1.0 http://js.oktell.ru/js/voice/ */
+/* Oktell-voice.js version 0.1.1 http://js.oktell.ru/js/voice/ */
 
 /*
  * JsSIP version 0.3.7
