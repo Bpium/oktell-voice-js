@@ -1,0 +1,24 @@
+{
+  "name": "oktell-voice",
+  "version": "0.1.0",
+  "authors": [
+    "airato <airato.a@gmail.com>"
+  ],
+  "description": "WebRTC sip-phone for Oktell.js",
+  "main": "oktell-voice.js",
+  "homepage": "https://git.oktell.ru/web/oktell-voice",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "*.js",
+    "*.coffee",
+    "*.html"
+  ],
+  "dependencies": {
+    "oktelljs": "https://git.oktell.ru/web/oktelljs.git#0.1.1"
+  }
+}
