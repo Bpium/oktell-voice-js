@@ -17,6 +17,7 @@
     "*.js",
     "*.coffee",
     "*.html",
+    "!build/**/*",
     "package.json",
     "old"
   ],
