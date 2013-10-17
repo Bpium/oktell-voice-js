@@ -693,13 +693,23 @@ oktellVoice = (function() {
 
   })(Account);
   userMedia = false;
+  okVoice.isSupported = function() {
+    return Boolean(navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/));
+  };
   okVoice.createUserMedia = function(onSuccess, onDeny, useVideo) {
-    var getUserMedia, hasDecision;
+    var getUserMedia, hasDecision, triggerDeny;
     if (userMedia) {
       return typeof onSuccess === "function" ? onSuccess(userMedia) : void 0;
     }
+    triggerDeny = function() {
+      var hasDecision;
+      hasDecision = true;
+      okVoice.trigger('mediaPermissionsRefuse');
+      return typeof onDeny === "function" ? onDeny(st) : void 0;
+    };
     getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    if (typeof getUserMedia !== 'function') {
+    if (!okVoice.isSupported() || typeof getUserMedia !== 'function') {
+      triggerDeny();
       return false;
     }
     hasDecision = false;
@@ -716,10 +726,8 @@ oktellVoice = (function() {
       userMedia = st;
       okVoice.trigger('mediaPermissionsAccept');
       return typeof onSuccess === "function" ? onSuccess(userMedia) : void 0;
-    }, function(st) {
-      hasDecision = true;
-      okVoice.trigger('mediaPermissionsRefuse');
-      return typeof onDeny === "function" ? onDeny(st) : void 0;
+    }, function() {
+      return triggerDeny();
     });
   };
   okVoice.getUserMediaStream = function() {

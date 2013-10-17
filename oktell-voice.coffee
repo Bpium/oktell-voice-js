@@ -461,11 +461,22 @@ oktellVoice = do ->
 
 	userMedia = false
 
+	okVoice.isSupported = ->
+		Boolean navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/)
+
 	okVoice.createUserMedia = (onSuccess, onDeny, useVideo)=>
 		if userMedia
 			return onSuccess?(userMedia)
+
+		triggerDeny = ->
+			hasDecision = true
+			okVoice.trigger 'mediaPermissionsRefuse'
+			onDeny?(st)
+
 		getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia or navigator.mozGetUserMedia or navigator.msGetUserMedia
-		if typeof getUserMedia isnt 'function'
+
+		if not okVoice.isSupported() or typeof getUserMedia isnt 'function'
+			triggerDeny()
 			return false
 		hasDecision = false
 		setTimeout =>
@@ -480,10 +491,9 @@ oktellVoice = do ->
 			userMedia = st
 			okVoice.trigger 'mediaPermissionsAccept'
 			onSuccess?(userMedia)
-		, (st)=>
-			hasDecision = true
-			okVoice.trigger 'mediaPermissionsRefuse'
-			onDeny?(st)
+		, =>
+			triggerDeny()
+
 
 	okVoice.getUserMediaStream = ->
 		userMedia

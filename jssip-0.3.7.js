@@ -14,6 +14,10 @@
  */
 (function (window) {
 
+	if ( typeof Object.defineProperties !== 'function' ) {
+		return false;
+	}
+
 	var JsSIP = (function () {
 		"use strict";
 

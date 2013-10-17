@@ -1,4 +1,4 @@
-/* Oktell-voice.js version 0.1.1 http://js.oktell.ru/js/voice/ */
+/* Oktell-voice.js version 0.2.0 http://js.oktell.ru/js/voice/ */
 
 /*
  * JsSIP version 0.3.7
@@ -15,6 +15,10 @@
  * @namespace
  */
 (function (window) {
+
+	if ( typeof Object.defineProperties !== 'function' ) {
+		return false;
+	}
 
 	var JsSIP = (function () {
 		"use strict";
@@ -20115,13 +20119,23 @@ oktellVoice = (function() {
 
   })(Account);
   userMedia = false;
+  okVoice.isSupported = function() {
+    return Boolean(navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/));
+  };
   okVoice.createUserMedia = function(onSuccess, onDeny, useVideo) {
-    var getUserMedia, hasDecision;
+    var getUserMedia, hasDecision, triggerDeny;
     if (userMedia) {
       return typeof onSuccess === "function" ? onSuccess(userMedia) : void 0;
     }
+    triggerDeny = function() {
+      var hasDecision;
+      hasDecision = true;
+      okVoice.trigger('mediaPermissionsRefuse');
+      return typeof onDeny === "function" ? onDeny(st) : void 0;
+    };
     getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    if (typeof getUserMedia !== 'function') {
+    if (!okVoice.isSupported() || typeof getUserMedia !== 'function') {
+      triggerDeny();
       return false;
     }
     hasDecision = false;
@@ -20138,10 +20152,8 @@ oktellVoice = (function() {
       userMedia = st;
       okVoice.trigger('mediaPermissionsAccept');
       return typeof onSuccess === "function" ? onSuccess(userMedia) : void 0;
-    }, function(st) {
-      hasDecision = true;
-      okVoice.trigger('mediaPermissionsRefuse');
-      return typeof onDeny === "function" ? onDeny(st) : void 0;
+    }, function() {
+      return triggerDeny();
     });
   };
   okVoice.getUserMediaStream = function() {
