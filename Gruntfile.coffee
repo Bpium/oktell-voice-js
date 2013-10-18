@@ -8,17 +8,29 @@ module.exports = (grunt)->
 
 	grunt.initConfig
 		myConf: myConf
-		clean:
+#		clean: ['build/*']
+#			build:
+#				files: [{
+##					expand: true
+##					flatten: true
+#					dot: true
+#					src: ['<%= myConf.build %>/*']
+#				}]
+
+		coffee:
+			options:
+				bare: true
 			build:
 				files: [{
-					src: ['<%= myConf.build %>/**/*']
+						expand: true,
+						src: 'oktell-voice.coffee',
+						dest: '<%= myConf.build %>',
+						ext: '.js'
 				}]
-
-
 		concat:
 			build:
 				options:
-					banner: "/* Oktell-voice.js version <%= myConf.version %> http://js.oktell.ru/js/voice/ */\n\n"
+					banner: "/*\n * Oktell-voice.js\n * version <%= myConf.version %>\n * http://js.oktell.ru/js/voice/\n */\n\n"
 				files: [
 					{
 						src: [
@@ -36,10 +48,27 @@ module.exports = (grunt)->
 					]
 				}
 
+		replace:
+			build:
+				src: ['oktell-voice.*']
+				overwrite: true
+				replacements: [{
+					from: /okVoice.version = '[0-9\.]+'/g,
+					to: "okVoice.version = '<%= myConf.version %>'"
+				}]
+			bower:
+				src: ['bower.json']
+				overwrite: true
+				replacements: [{
+					from: /"version": "[0-9\.]+",/,
+					to: '"version": "<%= myConf.version %>",'
+				}]
+
 
 
 	grunt.registerTask 'build', [
-#		'clean:build',
+		'replace',
+		'coffee:build',
 		'concat:build',
 		'uglify:build'
 	]

@@ -9,11 +9,17 @@ module.exports = function(grunt) {
   };
   grunt.initConfig({
     myConf: myConf,
-    clean: {
+    coffee: {
+      options: {
+        bare: true
+      },
       build: {
         files: [
           {
-            src: ['<%= myConf.build %>/**/*']
+            expand: true,
+            src: 'oktell-voice.coffee',
+            dest: '<%= myConf.build %>',
+            ext: '.js'
           }
         ]
       }
@@ -21,7 +27,7 @@ module.exports = function(grunt) {
     concat: {
       build: {
         options: {
-          banner: "/* Oktell-voice.js version <%= myConf.version %> http://js.oktell.ru/js/voice/ */\n\n"
+          banner: "/*\n * Oktell-voice.js\n * version <%= myConf.version %>\n * http://js.oktell.ru/js/voice/\n */\n\n"
         },
         files: [
           {
@@ -37,8 +43,30 @@ module.exports = function(grunt) {
           '<%= myConf.build %>/oktell-voice.min.js': ['<%= myConf.build %>/oktell-voice.js']
         }
       }
+    },
+    replace: {
+      build: {
+        src: ['oktell-voice.*'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /okVoice.version = '[0-9\.]+'/g,
+            to: "okVoice.version = '<%= myConf.version %>'"
+          }
+        ]
+      },
+      bower: {
+        src: ['bower.json'],
+        overwrite: true,
+        replacements: [
+          {
+            from: /"version": "[0-9\.]+",/,
+            to: '"version": "<%= myConf.version %>",'
+          }
+        ]
+      }
     }
   });
-  grunt.registerTask('build', ['concat:build', 'uglify:build']);
+  grunt.registerTask('build', ['replace', 'coffee:build', 'concat:build', 'uglify:build']);
   return grunt.registerTask('default', ['build']);
 };
