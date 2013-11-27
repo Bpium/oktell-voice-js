@@ -1,0 +1,21 @@
+{
+  "name": "oktelljs",
+  "version": "1.6.0",
+  "authors": [
+    "airato <airato.a@gmail.com>"
+  ],
+  "description": "Oktell.js",
+  "main": "oktell.js",
+  "homepage": "https://git.oktell.ru/web/oktelljs",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "**/*",
+    "!build/**/*",
+    "!bower.json",
+    "!README.md"
+  ]
+}
