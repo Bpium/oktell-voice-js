@@ -35,7 +35,7 @@ module.exports = (grunt)->
 					{
 						src: [
 							'jssip-0.3.7.js',
-							'oktell-voice.js'
+							'<%= myConf.build %>/oktell-voice.js'
 						]
 						dest: '<%= myConf.build %>/oktell-voice.js'
 					}
