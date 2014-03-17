@@ -462,13 +462,17 @@ oktellVoice = do ->
 	userMedia = false
 
 	okVoice.isSupported = ->
-		Boolean navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/)
+		# Supported Chrome, Yandex browser >=14, Opera >=20
+		isChrome = Boolean navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/)
+		isYaBrowser = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? YaBrowser\/([0-9]+)/)?[1]) >= 14
+		isOpera = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+ OPR\/([0-9]+)/)?[1]) >= 20
+		return isChrome or isYaBrowser or isOpera
 
 	okVoice.createUserMedia = (onSuccess, onDeny, useVideo)=>
 		if userMedia
 			return onSuccess?(userMedia)
 
-		triggerDeny = ->
+		triggerDeny = (st)->
 			hasDecision = true
 			okVoice.trigger 'mediaPermissionsRefuse'
 			onDeny?(st)
@@ -491,8 +495,8 @@ oktellVoice = do ->
 			userMedia = st
 			okVoice.trigger 'mediaPermissionsAccept'
 			onSuccess?(userMedia)
-		, =>
-			triggerDeny()
+		, (error)=>
+			triggerDeny(error)
 
 
 	okVoice.getUserMediaStream = ->
