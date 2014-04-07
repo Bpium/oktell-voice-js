@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Тестовая страничка для oktelljs</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+	<link rel="stylesheet" href="bower_components/webpanel/build/oktell-panel.css"/>
+
+	<script type="text/javascript" src='bower_components/jquery/dist/jquery.js'></script>
+	<!--<script type="text/javascript" src='bower_components/oktelljs/build/oktell.js'></script>-->
+	<script type="text/javascript" src="http://cdn.airato.lan/oktelljs/oktell.js"></script>
+	<script type="text/javascript" src="jssip-0.4.0-devel.js"></script>
+	<!--<script type="text/javascript" src="jssip-0.4.0-devel-origin.js"></script>-->
+	<script type="text/javascript" src="oktell-voice.js"></script>
+	<script type="text/javascript" src="bower_components/webpanel/build/oktell-panel.js"></script>
+
+
+
+	<script type="text/javascript">
+		window.oktell = new Oktell
+	</script>
+
+	<script type="text/javascript">
+		$(function(){
+
+			$('#j_login').val( localStorage.demoLogin || '' )
+			$('#j_pass').val( localStorage.demoPass || '' )
+			$('#j_server').val( localStorage.demoServer || '192.168.0.61' )
+			$('#j_webrtc').attr( 'checked',  Boolean(parseInt(localStorage.useWebRTC)) || false )
+
+			$('#j_login').focus();
+
+
+			var stateEl = $('#connectionState');
+			stateEl.text('Соединение');
+			var oktell = window.oktell
+
+			oktell.on('disconnect', function(reason){
+				stateEl.text('Ошибка')
+			});
+
+			var log = function(){
+				console.warn.apply(console, arguments);
+			}
+
+			oktell.on('abonentsChange', function(i){
+				var abs = [];
+				for ( var j = 0; j < i.length; j++ ) {
+					abs.push(i[j].phone || i[j].key);
+				}
+				log('#### abonentsChange ' + abs.join(', ') );
+			});
+			oktell.on('holdAbonentEnter', function(i){ log('==== holdAbonentEnter ' + i.phone ); });
+			oktell.on('holdAbonentLeave', function(i){ log('==== holdAbonentLeave ' + i.phone ); });
+			oktell.on('holdStateChange', function(i){ log('**** holdStateChange hasHold ' + i.hasHold + ', abonent ' + (i.abonent && i.abonent.phone) ); });
+			oktell.on('stateChange', function(n,o){ log('++++ stateChange to ' + n + ' from ' + o); });
+			oktell.on('readyStart', function(d){ log('---- readyStart ' + (d && d[0] && d[0].phone)); });
+			oktell.on('readyStop', function(d){	log('---- readyStop ' + (d && d[0] && d[0].phone)); });
+			oktell.on('callStart', function(d){	log('---- callStart ' + (d && d[0] && d[0].phone)); });
+			oktell.on('callStop', function(d){	log('---- callStop ' + (d && d[0] && d[0].phone)); });
+			oktell.on('ringStart', function(d){	log('---- ringStart ' + (d && d[0] && d[0].phone)); });
+			oktell.on('ringStop', function(d){	log('---- ringStop ' + (d && d[0] && d[0].phone)); });
+			oktell.on('backRingStart', function(d){	log('---- backRingStart ' + (d && d[0] && d[0].phone)); });
+			oktell.on('backRingStop', function(d){	log('---- backRingStop ' + (d && d[0] && d[0].phone)); });
+			oktell.on('talkStart', function(d){	log('---- talkStart ' + (d && d[0] && d[0].phone)); });
+			oktell.on('talkStop', function(d){	log('---- talkStop ' + (d && d[0] && d[0].phone)); });
+
+			var statesLogel = $('#webstate')
+			oktell.on('statusChange', function(newS, oldS){
+				var d = new Date();
+				statesLogel.append( '<p>Cтатус = "' + newS + '", предыдущий статус = "' + oldS + '", время смены ' + d.getHours()+':'+ d.getMinutes()+':'+ d.getSeconds() + '</p>' );
+			});
+
+
+			$('#j_form').on('submit', function(e){
+				e.preventDefault();
+
+
+				var login = $('#j_login').val()
+				var pass = $('#j_pass').val()
+				var server = $('#j_server').val()
+				var useWebRTC = $('#j_webrtc').is(':checked')
+
+				//startWebRtcClient(login,pass,server);
+
+				localStorage.demoLogin = login
+				localStorage.demoPass = pass
+				localStorage.demoServer = server
+				localStorage.useWebRTC = useWebRTC ? 1 : 0;
+
+				var connect = function() {
+					oktell.connect({
+						//url: ['213.239.200.141'],
+						//url: ['192.168.0.61'], login: 'a4', password: 'a4',
+						//url: ['192.168.0.12'], login: 'leader', password: '123', // звонить на 183
+						url: server, login: login, password: pass,
+						debugMode: true,
+						openTimeout: 5000,
+						oktellVoice: useWebRTC,
+						webSocketSwfLocation: '/bower_components/oktelljs/WebSocketMain.swf',
+						//expires: 84600,
+						queryTimeout: 5000,
+						queueInterval: 300000,
+						//				defaultAvatar: '/img/noavatar.png',
+						//				defaultAvatar32x32: '/img/noavatar.png',
+						//				defaultAvatar64x64: '/img/noavatar.png',
+						callback: function(data) {
+
+							if ( data.result ) {
+								stateEl.text('Онлайн')
+								oktell.trigger('oktellConnected')
+								$('#j_form_block').slideUp();
+							} else {
+								stateEl.text('Ошибка')
+							}
+						}
+					});
+				}
+
+				if ( useWebRTC ) {
+					oktellVoice.createUserMedia(function(){
+						connect();
+					});
+				} else {
+					connect();
+				}
+
+			});
+
+
+			$('.setStatus').click(function(){ oktell.setStatus($(this).data('status'), false, 'break message')});
+
+			$.oktellPanel({
+				oktell: oktell,
+				dynamic: true,
+				position: 'right',
+				ringtone: false,
+				debug: true,
+				lang: 'en',
+				container: $('.panel_container'),
+				hideOnDisconnect: false
+			});
+			$('.userPhone').oktellButton()
+		});
+	</script>
+
+</head>
+<body style="height: 100%">
+<div class="panel_container" style="width: 300px; float: left; margin-left: 50px;"></div>
+<div style="">
+	<style type="text/css">
+		.userPhone {
+			float: right;
+			display: inline-block;
+		}
+		.user {
+			width: 200px;
+			padding-bottom: 10px;
+		}
+	</style>
+	<div id="j_form_block">
+		<form id="j_form">
+			<table>
+				<tbody>
+				<tr>
+					<td>Логин</td>
+					<td><input type="text" id="j_login"/></td>
+				</tr>
+				<tr>
+					<td>Пароль</td>
+					<td><input type="password" id="j_pass"/></td>
+				</tr>
+				<tr>
+					<td>Сервер</td>
+					<td><input type="text" id="j_server" value="192.168.0.61:4066"/></td>
+				</tr>
+				<tr>
+					<td colspan="2"><label><input type="checkbox" id="j_webrtc"/> Использовать WebRTC</label></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input type="submit" /></td>
+				</tr>
+				</tbody>
+			</table>
+		</form>
+
+
+	</div>
+	<div style="">
+		<br>
+		<span>Статус:</span> <span id="connectionState">Соединение</span><br>
+		<div style="display: none;">
+			<button class="setStatus" data-status="ready">set Ready</button><br>
+			<button class="setStatus" data-status="dnd">set DND</button><br>
+			<button class="setStatus" data-status="redirect">set Redirect</button><br>
+			<button class="setStatus" data-status="break">set Break with text</button><br>
+			<div id="webstate"></div><br>
+		</div>
+
+		<p class="user">Дмитрий Е. 103<span class="userPhone" data-phone="103"></span></p>
+		<p class="user">Алексей В. 101<span class="userPhone" data-phone="101"></span></p>
+		<p class="user">Рамиль Г. 135<span class="userPhone" data-phone="135"></span></p>
+		<p class="user">Оператор 106<span class="userPhone" data-phone="106"></span></p>
+		<p class="user">Абонент 104<span class="userPhone" data-phone="104"></span></p>
+
+		<br>
+		<br>
+
+		<div style="display: none;">
+			Вид кнопок
+			Call
+			<ul class="b_button_action m_button_action_call">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			Conference
+			<ul class="b_button_action m_button_action_conference">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			transfer
+			<ul class="b_button_action m_button_action_transfer">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			toggle
+			<ul class="b_button_action m_button_action_toggle">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			intercom
+			<ul class="b_button_action m_button_action_intercom">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			endCall
+			<ul class="b_button_action m_button_action_endcall">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			ghostListen
+			<ul class="b_button_action m_button_action_ghostlisten">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			ghostHelp
+			<ul class="b_button_action m_button_action_ghosthelp">
+				<li class="g_first">
+					<i></i>
+				</li>
+				<li class="g_last drop_down">
+					<i></i>
+				</li>
+			</ul><br>
+			<br>
+			<ul style="z-index: 999; padding: 0px; font-size: 13px; font-family: Tahoma; top: 80px; left: 500px; visibility: visible; display: inline-block" class="b_actions_group_list">
+				<li class="i_call g_first" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="call">
+					<i></i>
+					<span data-bind="text: a.text">Позвонить</span>
+				</li>
+
+				<li class="i_conference" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="conference">
+					<i></i>
+					<span data-bind="text: a.text">Конференция</span>
+				</li>
+
+				<li class="i_intercom" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="intercom">
+					<i></i>
+					<span data-bind="text: a.text">Интерком</span>
+				</li>
+
+				<li class="i_toggle" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="intercom">
+					<i></i>
+					<span data-bind="text: a.text">toggle</span>
+				</li>
+
+				<li class="i_transfer" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="intercom">
+					<i></i>
+					<span data-bind="text: a.text">transfer</span>
+				</li>
+
+				<li class="i_endcall" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="intercom">
+					<i></i>
+					<span data-bind="text: a.text">endcall</span>
+				</li>
+
+				<li class="i_ghostlisten" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="intercom">
+					<i></i>
+					<span data-bind="text: a.text">ghostlisten</span>
+				</li>
+
+				<li class="i_ghosthelp g_last" data-bind="click: $parent.doActionByClick, css: $data.css, hoverSelect: true" data-action="intercom">
+					<i></i>
+					<span data-bind="text: a.text">ghosthelp</span>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

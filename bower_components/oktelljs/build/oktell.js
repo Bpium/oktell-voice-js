@@ -1,9 +1,3 @@
-/*
- * Oktell.js
- * version 1.6.0
- * http://js.oktell.ru/
- */
-
 /*	SWFObject v2.2 <http://code.google.com/p/swfobject/> is released under the MIT License <http://www.opensource.org/licenses/mit-license.php> */
 var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="ShockwaveFlash.ShockwaveFlash",q="application/x-shockwave-flash",R="SWFObjectExprInst",x="onreadystatechange",O=window,j=document,t=navigator,T=false,U=[h],o=[],N=[],I=[],l,Q,E,B,J=false,a=false,n,G,m=true,M=function(){var aa=typeof j.getElementById!=D&&typeof j.getElementsByTagName!=D&&typeof j.createElement!=D,ah=t.userAgent.toLowerCase(),Y=t.platform.toLowerCase(),ae=Y?/win/.test(Y):/win/.test(ah),ac=Y?/mac/.test(Y):/mac/.test(ah),af=/webkit/.test(ah)?parseFloat(ah.replace(/^.*webkit\/(\d+(\.\d+)?).*$/,"$1")):false,X=!+"\v1",ag=[0,0,0],ab=null;if(typeof t.plugins!=D&&typeof t.plugins[S]==r){ab=t.plugins[S].description;if(ab&&!(typeof t.mimeTypes!=D&&t.mimeTypes[q]&&!t.mimeTypes[q].enabledPlugin)){T=true;X=false;ab=ab.replace(/^.*\s+(\S+\s+\S+$)/,"$1");ag[0]=parseInt(ab.replace(/^(.*)\..*$/,"$1"),10);ag[1]=parseInt(ab.replace(/^.*\.(.*)\s.*$/,"$1"),10);ag[2]=/[a-zA-Z]/.test(ab)?parseInt(ab.replace(/^.*[a-zA-Z]+(.*)$/,"$1"),10):0}}else{if(typeof O.ActiveXObject!=D){try{var ad=new ActiveXObject(W);if(ad){ab=ad.GetVariable("$version");if(ab){X=true;ab=ab.split(" ")[1].split(",");ag=[parseInt(ab[0],10),parseInt(ab[1],10),parseInt(ab[2],10)]}}}catch(Z){}}}return{w3:aa,pv:ag,wk:af,ie:X,win:ae,mac:ac}}(),k=function(){if(!M.w3){return}if((typeof j.readyState!=D&&j.readyState=="complete")||(typeof j.readyState==D&&(j.getElementsByTagName("body")[0]||j.body))){f()}if(!J){if(typeof j.addEventListener!=D){j.addEventListener("DOMContentLoaded",f,false)}if(M.ie&&M.win){j.attachEvent(x,function(){if(j.readyState=="complete"){j.detachEvent(x,arguments.callee);f()}});if(O==top){(function(){if(J){return}try{j.documentElement.doScroll("left")}catch(X){setTimeout(arguments.callee,0);return}f()})()}}if(M.wk){(function(){if(J){return}if(!/loaded|complete/.test(j.readyState)){setTimeout(arguments.callee,0);return}f()})()}s(f)}}();function f(){if(J){return}try{var Z=j.getElementsByTagName("body")[0].appendChild(C("span"));Z.parentNode.removeChild(Z)}catch(aa){return}J=true;var X=U.length;for(var Y=0;Y<X;Y++){U[Y]()}}function K(X){if(J){X()}else{U[U.length]=X}}function s(Y){if(typeof O.addEventListener!=D){O.addEventListener("load",Y,false)}else{if(typeof j.addEventListener!=D){j.addEventListener("load",Y,false)}else{if(typeof O.attachEvent!=D){i(O,"onload",Y)}else{if(typeof O.onload=="function"){var X=O.onload;O.onload=function(){X();Y()}}else{O.onload=Y}}}}}function h(){if(T){V()}else{H()}}function V(){var X=j.getElementsByTagName("body")[0];var aa=C(r);aa.setAttribute("type",q);var Z=X.appendChild(aa);if(Z){var Y=0;(function(){if(typeof Z.GetVariable!=D){var ab=Z.GetVariable("$version");if(ab){ab=ab.split(" ")[1].split(",");M.pv=[parseInt(ab[0],10),parseInt(ab[1],10),parseInt(ab[2],10)]}}else{if(Y<10){Y++;setTimeout(arguments.callee,10);return}}X.removeChild(aa);Z=null;H()})()}else{H()}}function H(){var ag=o.length;if(ag>0){for(var af=0;af<ag;af++){var Y=o[af].id;var ab=o[af].callbackFn;var aa={success:false,id:Y};if(M.pv[0]>0){var ae=c(Y);if(ae){if(F(o[af].swfVersion)&&!(M.wk&&M.wk<312)){w(Y,true);if(ab){aa.success=true;aa.ref=z(Y);ab(aa)}}else{if(o[af].expressInstall&&A()){var ai={};ai.data=o[af].expressInstall;ai.width=ae.getAttribute("width")||"0";ai.height=ae.getAttribute("height")||"0";if(ae.getAttribute("class")){ai.styleclass=ae.getAttribute("class")}if(ae.getAttribute("align")){ai.align=ae.getAttribute("align")}var ah={};var X=ae.getElementsByTagName("param");var ac=X.length;for(var ad=0;ad<ac;ad++){if(X[ad].getAttribute("name").toLowerCase()!="movie"){ah[X[ad].getAttribute("name")]=X[ad].getAttribute("value")}}P(ai,ah,Y,ab)}else{p(ae);if(ab){ab(aa)}}}}}else{w(Y,true);if(ab){var Z=z(Y);if(Z&&typeof Z.SetVariable!=D){aa.success=true;aa.ref=Z}ab(aa)}}}}}function z(aa){var X=null;var Y=c(aa);if(Y&&Y.nodeName=="OBJECT"){if(typeof Y.SetVariable!=D){X=Y}else{var Z=Y.getElementsByTagName(r)[0];if(Z){X=Z}}}return X}function A(){return !a&&F("6.0.65")&&(M.win||M.mac)&&!(M.wk&&M.wk<312)}function P(aa,ab,X,Z){a=true;E=Z||null;B={success:false,id:X};var ae=c(X);if(ae){if(ae.nodeName=="OBJECT"){l=g(ae);Q=null}else{l=ae;Q=X}aa.id=R;if(typeof aa.width==D||(!/%$/.test(aa.width)&&parseInt(aa.width,10)<310)){aa.width="310"}if(typeof aa.height==D||(!/%$/.test(aa.height)&&parseInt(aa.height,10)<137)){aa.height="137"}j.title=j.title.slice(0,47)+" - Flash Player Installation";var ad=M.ie&&M.win?"ActiveX":"PlugIn",ac="MMredirectURL="+O.location.toString().replace(/&/g,"%26")+"&MMplayerType="+ad+"&MMdoctitle="+j.title;if(typeof ab.flashvars!=D){ab.flashvars+="&"+ac}else{ab.flashvars=ac}if(M.ie&&M.win&&ae.readyState!=4){var Y=C("div");X+="SWFObjectNew";Y.setAttribute("id",X);ae.parentNode.insertBefore(Y,ae);ae.style.display="none";(function(){if(ae.readyState==4){ae.parentNode.removeChild(ae)}else{setTimeout(arguments.callee,10)}})()}u(aa,ab,X)}}function p(Y){if(M.ie&&M.win&&Y.readyState!=4){var X=C("div");Y.parentNode.insertBefore(X,Y);X.parentNode.replaceChild(g(Y),X);Y.style.display="none";(function(){if(Y.readyState==4){Y.parentNode.removeChild(Y)}else{setTimeout(arguments.callee,10)}})()}else{Y.parentNode.replaceChild(g(Y),Y)}}function g(ab){var aa=C("div");if(M.win&&M.ie){aa.innerHTML=ab.innerHTML}else{var Y=ab.getElementsByTagName(r)[0];if(Y){var ad=Y.childNodes;if(ad){var X=ad.length;for(var Z=0;Z<X;Z++){if(!(ad[Z].nodeType==1&&ad[Z].nodeName=="PARAM")&&!(ad[Z].nodeType==8)){aa.appendChild(ad[Z].cloneNode(true))}}}}}return aa}function u(ai,ag,Y){var X,aa=c(Y);if(M.wk&&M.wk<312){return X}if(aa){if(typeof ai.id==D){ai.id=Y}if(M.ie&&M.win){var ah="";for(var ae in ai){if(ai[ae]!=Object.prototype[ae]){if(ae.toLowerCase()=="data"){ag.movie=ai[ae]}else{if(ae.toLowerCase()=="styleclass"){ah+=' class="'+ai[ae]+'"'}else{if(ae.toLowerCase()!="classid"){ah+=" "+ae+'="'+ai[ae]+'"'}}}}}var af="";for(var ad in ag){if(ag[ad]!=Object.prototype[ad]){af+='<param name="'+ad+'" value="'+ag[ad]+'" />'}}aa.outerHTML='<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"'+ah+">"+af+"</object>";N[N.length]=ai.id;X=c(ai.id)}else{var Z=C(r);Z.setAttribute("type",q);for(var ac in ai){if(ai[ac]!=Object.prototype[ac]){if(ac.toLowerCase()=="styleclass"){Z.setAttribute("class",ai[ac])}else{if(ac.toLowerCase()!="classid"){Z.setAttribute(ac,ai[ac])}}}}for(var ab in ag){if(ag[ab]!=Object.prototype[ab]&&ab.toLowerCase()!="movie"){e(Z,ab,ag[ab])}}aa.parentNode.replaceChild(Z,aa);X=Z}}return X}function e(Z,X,Y){var aa=C("param");aa.setAttribute("name",X);aa.setAttribute("value",Y);Z.appendChild(aa)}function y(Y){var X=c(Y);if(X&&X.nodeName=="OBJECT"){if(M.ie&&M.win){X.style.display="none";(function(){if(X.readyState==4){b(Y)}else{setTimeout(arguments.callee,10)}})()}else{X.parentNode.removeChild(X)}}}function b(Z){var Y=c(Z);if(Y){for(var X in Y){if(typeof Y[X]=="function"){Y[X]=null}}Y.parentNode.removeChild(Y)}}function c(Z){var X=null;try{X=j.getElementById(Z)}catch(Y){}return X}function C(X){return j.createElement(X)}function i(Z,X,Y){Z.attachEvent(X,Y);I[I.length]=[Z,X,Y]}function F(Z){var Y=M.pv,X=Z.split(".");X[0]=parseInt(X[0],10);X[1]=parseInt(X[1],10)||0;X[2]=parseInt(X[2],10)||0;return(Y[0]>X[0]||(Y[0]==X[0]&&Y[1]>X[1])||(Y[0]==X[0]&&Y[1]==X[1]&&Y[2]>=X[2]))?true:false}function v(ac,Y,ad,ab){if(M.ie&&M.mac){return}var aa=j.getElementsByTagName("head")[0];if(!aa){return}var X=(ad&&typeof ad=="string")?ad:"screen";if(ab){n=null;G=null}if(!n||G!=X){var Z=C("style");Z.setAttribute("type","text/css");Z.setAttribute("media",X);n=aa.appendChild(Z);if(M.ie&&M.win&&typeof j.styleSheets!=D&&j.styleSheets.length>0){n=j.styleSheets[j.styleSheets.length-1]}G=X}if(M.ie&&M.win){if(n&&typeof n.addRule==r){n.addRule(ac,Y)}}else{if(n&&typeof j.createTextNode!=D){n.appendChild(j.createTextNode(ac+" {"+Y+"}"))}}}function w(Z,X){if(!m){return}var Y=X?"visible":"hidden";if(J&&c(Z)){c(Z).style.visibility=Y}else{v("#"+Z,"visibility:"+Y)}}function L(Y){var Z=/[\\\"<>\.;]/;var X=Z.exec(Y)!=null;return X&&typeof encodeURIComponent!=D?encodeURIComponent(Y):Y}var d=function(){if(M.ie&&M.win){window.attachEvent("onunload",function(){var ac=I.length;for(var ab=0;ab<ac;ab++){I[ab][0].detachEvent(I[ab][1],I[ab][2])}var Z=N.length;for(var aa=0;aa<Z;aa++){y(N[aa])}for(var Y in M){M[Y]=null}M=null;for(var X in swfobject){swfobject[X]=null}swfobject=null})}}();return{registerObject:function(ab,X,aa,Z){if(M.w3&&ab&&X){var Y={};Y.id=ab;Y.swfVersion=X;Y.expressInstall=aa;Y.callbackFn=Z;o[o.length]=Y;w(ab,false)}else{if(Z){Z({success:false,id:ab})}}},getObjectById:function(X){if(M.w3){return z(X)}},embedSWF:function(ab,ah,ae,ag,Y,aa,Z,ad,af,ac){var X={success:false,id:ah};if(M.w3&&!(M.wk&&M.wk<312)&&ab&&ah&&ae&&ag&&Y){w(ah,false);K(function(){ae+="";ag+="";var aj={};if(af&&typeof af===r){for(var al in af){aj[al]=af[al]}}aj.data=ab;aj.width=ae;aj.height=ag;var am={};if(ad&&typeof ad===r){for(var ak in ad){am[ak]=ad[ak]}}if(Z&&typeof Z===r){for(var ai in Z){if(typeof am.flashvars!=D){am.flashvars+="&"+ai+"="+Z[ai]}else{am.flashvars=ai+"="+Z[ai]}}}if(F(Y)){var an=u(aj,am,ah);if(aj.id==ah){w(ah,true)}X.success=true;X.ref=an}else{if(aa&&A()){aj.data=aa;P(aj,am,ah,ac);return}else{w(ah,true)}}if(ac){ac(X)}})}else{if(ac){ac(X)}}},switchOffAutoHideShow:function(){m=false},ua:M,getFlashPlayerVersion:function(){return{major:M.pv[0],minor:M.pv[1],release:M.pv[2]}},hasFlashPlayerVersion:F,createSWF:function(Z,Y,X){if(M.w3){return u(Z,Y,X)}else{return undefined}},showExpressInstall:function(Z,aa,X,Y){if(M.w3&&A()){P(Z,aa,X,Y)}},removeSWF:function(X){if(M.w3){y(X)}},createCSS:function(aa,Z,Y,X){if(M.w3){v(aa,Z,Y,X)}},addDomLoadEvent:K,addLoadEvent:s,getQueryParamValue:function(aa){var Z=j.location.search||j.location.hash;if(Z){if(/\?/.test(Z)){Z=Z.split("?")[1]}if(aa==null){return L(Z)}var Y=Z.split("&");for(var X=0;X<Y.length;X++){if(Y[X].substring(0,Y[X].indexOf("="))==aa){return L(Y[X].substring((Y[X].indexOf("=")+1)))}}}return""},expressInstallCallback:function(){if(a){var X=c(R);if(X&&l){X.parentNode.replaceChild(l,X);if(Q){w(Q,true);if(M.ie&&M.win){l.style.display="block"}}if(E){E(B)}}a=false}}}}();
 
@@ -20,11 +14,11 @@ Oktell = (function(){
 			Date.prototype.toOktellJSON = function (key) {
 				return isFinite(this.valueOf()) ?
 					this.getUTCFullYear()   + '-' +
-						f(this.getUTCMonth() + 1) + '-' +
-						f(this.getUTCDate())      + 'T' +
-						f(this.getUTCHours())     + ':' +
-						f(this.getUTCMinutes())   + ':' +
-						f(this.getUTCSeconds())   + 'Z' : null;
+					f(this.getUTCMonth() + 1) + '-' +
+					f(this.getUTCDate())      + 'T' +
+					f(this.getUTCHours())     + ':' +
+					f(this.getUTCMinutes())   + ':' +
+					f(this.getUTCSeconds())   + 'Z' : null;
 			};
 
 			String.prototype.toOktellJSON =
@@ -55,10 +49,10 @@ Oktell = (function(){
 			escapable.lastIndex = 0;
 			return escapable.test(string) ?
 				'"' + string.replace(escapable, function (a) {
-					var c = meta[a];
-					return typeof c === 'string' ? c :
-						'\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
-				}) + '"' :
+				var c = meta[a];
+				return typeof c === 'string' ? c :
+					'\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+			}) + '"' :
 				'"' + string + '"';
 		}
 
@@ -283,7 +277,7 @@ Oktell = (function(){
 		}
 		if (location.protocol == "file:") {
 			logger.error(
-				"WARNING: web-socket-js doesn't work in file:///... URL " +
+					"WARNING: web-socket-js doesn't work in file:///... URL " +
 					"unless you set Flash Security Settings properly. " +
 					"Open the page via Web server i.e. http://...");
 		}
@@ -510,7 +504,7 @@ Oktell = (function(){
 				var swfHost = RegExp.$1;
 				if (location.host != swfHost) {
 					logger.error(
-						"[WebSocket] You must host HTML and WebSocketMain.swf in the same host " +
+							"[WebSocket] You must host HTML and WebSocketMain.swf in the same host " +
 							"('" + location.host + "' != '" + swfHost + "'). " +
 							"See also 'How to host HTML file and SWF file in different domains' section " +
 							"in README.md. If you use WebSocketMainInsecure.swf, you can suppress this message " +
@@ -1360,13 +1354,22 @@ Oktell = (function(){
 			if ( ! eventNames ) {
 				return false;
 			}
-			var realArgs = arguments;
+			var args = Array.prototype.slice.call( arguments, 1 );
+			var allEventCalls = calls['all'];
 			each( eventNames, function(event){
 				var eventCalls = calls[ event ];
 				if ( eventCalls ) {
 					each(eventCalls, function(eventCall){
 						if ( eventCall && typeof eventCall.callback == 'function' ) {
-							eventCall.callback.apply( eventCall.context || undefined, Array.prototype.slice.call( realArgs, 1 ) );
+							eventCall.callback.apply( eventCall.context || undefined, args );
+						}
+					});
+				}
+				if ( allEventCalls ) {
+					var allEventArgs = [event].concat(args);
+					each(allEventCalls, function(eventCall){
+						if ( eventCall && typeof eventCall.callback == 'function' ) {
+							eventCall.callback.apply( eventCall.context || undefined, allEventArgs );
 						}
 					});
 				}
@@ -1917,7 +1920,8 @@ Oktell = (function(){
 				pbxmaketransfer: {v:120725},
 				triggercustomevent: {v:120725},
 				getallusernumbers: {v:120920},
-				cc_getlunchtypes: {v:130101}
+				cc_getlunchtypes: {v:130101},
+				pbxanswercall: {v:131218}
 			},
 			httpQueryData = {},
 			cookieSessionName = '___oktellsessionid',
@@ -2127,7 +2131,13 @@ Oktell = (function(){
 			// change pass
 			2801: 'wrong old password',
 			2802: 'incorrect new password',
-			2803: 'error while exec changepassword method on server'
+			2803: 'error while exec changepassword method on server',
+			// answer
+			2901: 'incorrect state',
+			2902: 'phone probably does not support intercom calls',
+			// uploadFile
+			3001: 'error while getting temp pass',
+			3002: 'aborted in beforeRequest callback function'
 
 		};
 
@@ -2451,7 +2461,7 @@ Oktell = (function(){
 			if ( oktellInfo.currentUrl && oktellInfo.oktellWebServerPort ) {
 				var protocol = oktellInfo.currentUrl.match(/^wss/) ? "https://" : "http://",
 					host = oktellInfo.currentUrl.match(/wss?:\/\/([^\s\/:]+)/)[1];
-					port = '';
+				port = '';
 				if ( ( protocol == 'https://' && self.getMyInfo().oktellWebServerPort != '443' ) || ( protocol == 'http://' && self.getMyInfo().oktellWebServerPort != '80' ) ) {
 					port = ':' + self.getMyInfo().oktellWebServerPort;
 				}
@@ -2546,6 +2556,17 @@ Oktell = (function(){
 				return uploadFilePure.apply(self, arguments);
 			}
 
+			var accept = options.accept;
+			delete options.accept;
+			if ( accept ) {
+				if ( ! isArray(accept) ) {
+					accept = [accept];
+				}
+				accept = 'accept="' + accept.join(',') + '"';
+			} else {
+				accept = '';
+			}
+
 			var rid = Math.random().toString().replace('.',''),
 				frameId = '_oktelljs_user_avatar_frame_' + rid,
 				formId = '_oktelljs_user_avatar_form_' + rid,
@@ -2553,7 +2574,13 @@ Oktell = (function(){
 
 			$('body').append('<iframe width="0" height="0" id="'+frameId+'" name="'+frameId+'"></iframe>');
 			$('body').append('<form enctype="multipart/form-data" target="'+frameId+'" id="'+formId+'" action="" method="post">' +
-				'<input style="visibility: hidden;" type="file" name="file" id="'+inputId+'" /></form>');
+				'<input style="visibility: hidden;" type="file" ' + accept + ' name="file" id="'+inputId+'" /></form>');
+
+			var callCallback = function(data) {
+				$('#'+formId).remove();
+				$('#'+frameId).remove();
+				callFunc(callback, data);
+			}
 
 			$('#'+inputId).change(function(e){
 
@@ -2565,6 +2592,11 @@ Oktell = (function(){
 
 				var fileName = file.replace('/', '\\').split('\\');
 				fileName = fileName[fileName.length-1];
+
+				if ( typeof beforeRequest == 'function' && beforeRequest(getSuccessObj({fileName:fileName})) === false ) {
+					callCallback(getErrorObj(3002));
+					return;
+				}
 
 				getHttpQueryPass( true, function(data){
 
@@ -2582,15 +2614,12 @@ Oktell = (function(){
 
 							path = path[1].replace( /\\/g , '/');
 
-							$('#'+formId).remove();
-							$('#'+frameId).remove();
-
-							callFunc(callback, getSuccessObj({path:path}));
+							callCallback(getSuccessObj({path:path}));
 						});
 
-						callFunc(beforeRequest, getSuccessObj({fileName:fileName}));
-
 						$('#'+formId).submit()
+					} else {
+						callCallback(getErrorObj(3001));
 					}
 
 				});
@@ -2615,6 +2644,17 @@ Oktell = (function(){
 				formId = '_oktelljs_user_avatar_form_' + rid,
 				inputId = '_oktelljs_user_profile_select_file_' + rid;
 
+			var accept = options.accept;
+			delete options.accept;
+			if ( accept ) {
+				if ( ! isArray(accept) ) {
+					accept = [accept];
+				}
+				accept = 'accept="' + accept.join(',') + '"';
+			} else {
+				accept = '';
+			}
+
 			var iframe = document.createElement('iframe');
 			iframe.id = frameId;
 			iframe.name = frameId;
@@ -2636,7 +2676,16 @@ Oktell = (function(){
 			input.type = 'file';
 			input.id = inputId
 			input.name = 'file';
+			input.accept =  accept;
 			form.appendChild(input);
+
+			var callCallback = function(data) {
+				var elem;
+				(elem=document.getElementById(frameId)).parentNode.removeChild(elem);
+				(elem=document.getElementById(formId)).parentNode.removeChild(elem);
+				callFunc(callback, data);
+			}
+
 
 			input.onchange = function() {
 				var file = input.value;
@@ -2647,6 +2696,11 @@ Oktell = (function(){
 
 				var fileName = file.replace('\\', '/').split('/');
 				fileName = fileName[fileName.length-1];
+
+				if ( typeof beforeRequest == 'function' && beforeRequest(getSuccessObj({fileName:fileName})) === false ) {
+					callCallback(getErrorObj(3002));
+					return;
+				}
 
 				getHttpQueryPass( true, function(data){
 					if ( data.result ) {
@@ -2662,16 +2716,12 @@ Oktell = (function(){
 
 							path = path[1].replace( /\\/g , '/');
 
-							var elem;
-							(elem=document.getElementById(frameId)).parentNode.removeChild(elem);
-							(elem=document.getElementById(formId)).parentNode.removeChild(elem);
-
-							callFunc(callback, getSuccessObj({path:path}));
+							callCallback(getSuccessObj({path:path}));
 						});
 
-						callFunc(beforeRequest, getSuccessObj({fileName:fileName}));
-
 						form.submit();
+					} else {
+						callCallback(getErrorObj(3001));
 					}
 				});
 			}
@@ -3117,6 +3167,7 @@ Oktell = (function(){
 			_conferenceId: false,
 			abonentList: {},
 			queueList: {},
+			answerCheckTimeout: 3000,
 			_talkLength: 0,
 			_talkTimer: false,
 			sip: false,
@@ -3124,6 +3175,7 @@ Oktell = (function(){
 			sipHasRTCSession: false,
 			_notRoutingIvrState: false,
 			currentSessionData: {},
+			intercomSupport: null,
 			states: {
 				DISCONNECTED: -1,
 				READY: 0,
@@ -3175,7 +3227,40 @@ Oktell = (function(){
 				return this._notRoutingIvrState;
 			},
 
-			answer: function() { if ( this.sipActive ) { this.sip.answer(); } },
+			answer: function(callback) {
+				var self = this,
+					checkInterval,
+					checkIntercomSupport,
+					afterTimer,
+					isAnswerSuccess;
+
+				if ( self.sipActive ) {
+					self.sip.answer();
+					callFunc(callback, getSuccessObj()); // TODO check answer result for callback
+				} else if ( self.intercomSupport === false ) {
+					callFunc(callback, getErrorObj(2902));
+				} else if ( self.state() == self.states.RING || self.state() == self.states.BACKRING ) {
+					sendOktell('pbxanswercall');
+					afterTimer = function(){
+						clearInterval(checkInterval);
+						clearTimeout(checkTimer);
+						callFunc(callback, getReturnObj(self.intercomSupport, {}, 2902));
+					}
+					checkIntercomSupport = function(){
+						return self.intercomSupport = ( self.state() == self.states.TALK || self.state() == self.states.CALL );
+					}
+					checkInterval = setInterval(function(){
+						if ( checkIntercomSupport() ) {
+							afterTimer();
+						}
+					}, 50);
+					checkTimer = setTimeout(function(){
+						afterTimer();
+					}, self.answerCheckTimeout);
+				} else {
+					callFunc(callback, getErrorObj(2901));
+				}
+			},
 
 			/**
 			 * Set info about conference
@@ -3350,7 +3435,7 @@ Oktell = (function(){
 					var oldStateId = this._stateId;
 					var oldState = this.apiGetStateStr(oldStateId);
 
-					log('CHANGE STATE FROM ' + this.getStateStr(this._stateId) + ' TO ' + this.getStateStr(newStateId), this.getAbonents(true));
+					log('CHANGE STATE FROM ' + this.getStateStr(this._stateId) + ' TO ' + this.getStateStr(newStateId), this.getAbonents(true), oldAbonents);
 
 					this._stateId = newStateId;
 
@@ -3454,20 +3539,20 @@ Oktell = (function(){
 							var newAb = newAbonents && newAbonents[0] || false;
 
 							/*if ( newAb && oldAb && oldHoldInfo.hasHold && newHoldInfo.hasHold &&
-									( // curr ab is old hold
-										( newAb.conferenceId && oldHoldInfo.conferenceId && newAb.conferenceId == oldHoldInfo.conferenceId ) || // curr ab is conf and it is old hold
-										( ! newAb.conferenceId && oldHoldInfo.abonent && newAb.key == oldHoldInfo.abonent.key ) // or curr ab isnt conf and it is old hold
-									)
-									&&
-									( // old ab is curr hold
-										( oldAb.conferenceId && newHoldInfo.conferenceId && oldAb.conferenceId == newHoldInfo.conferenceId ) || // curr ab is conf and it is old hold
-										( ! oldAb.conferenceId && newHoldInfo.abonent && oldAb.key == newHoldInfo.abonent.key ) // or curr ab isnt conf and it is old hold
-									)
-								) {
+							 ( // curr ab is old hold
+							 ( newAb.conferenceId && oldHoldInfo.conferenceId && newAb.conferenceId == oldHoldInfo.conferenceId ) || // curr ab is conf and it is old hold
+							 ( ! newAb.conferenceId && oldHoldInfo.abonent && newAb.key == oldHoldInfo.abonent.key ) // or curr ab isnt conf and it is old hold
+							 )
+							 &&
+							 ( // old ab is curr hold
+							 ( oldAb.conferenceId && newHoldInfo.conferenceId && oldAb.conferenceId == newHoldInfo.conferenceId ) || // curr ab is conf and it is old hold
+							 ( ! oldAb.conferenceId && newHoldInfo.abonent && oldAb.key == newHoldInfo.abonent.key ) // or curr ab isnt conf and it is old hold
+							 )
+							 ) {
 
-								log('toggle was called');
+							 log('toggle was called');
 
-							} else*/ if ( that.currentSessionData.isAutoCall && ! data.abonent.isautocall && oldState == that.states.READY ) {
+							 } else*/ if ( that.currentSessionData.isAutoCall && ! data.abonent.isautocall && oldState == that.states.READY ) {
 								that.state( that.states.BACKRING, oldAbonents );
 							} else if ( data.abonent.isautocall ) {
 								that.currentSessionData.isAutoCall = false;
@@ -3479,10 +3564,10 @@ Oktell = (function(){
 									that.state( that.states.RING, oldAbonents );
 								}
 							} else if ( ( !( that.currentSessionData.isAutoCall ) && (
-											data.abonent.iscommutated ||
-											data.abonent.iswaitinginflash ||
-											data.abonent.isconference ) ) ||
-										( data.linestatestr == 'lsCommutated' && data.abonent.isivr && ! data.isroutingivr )
+								data.abonent.iscommutated ||
+								data.abonent.iswaitinginflash ||
+								data.abonent.isconference ) ) ||
+								( data.linestatestr == 'lsCommutated' && data.abonent.isivr && ! data.abonent.isroutingivr )
 								) {  // || data.abonent.isivr) ) {
 								that.startTalkTimer(parseInt(data.timertalklensec) || 0);
 								var newTalkStarted = that.currentSessionData.commStopped;
@@ -3576,7 +3661,7 @@ Oktell = (function(){
 						isConferenceHidden: data.competitorid && data.ishidden ? true : undefined,
 						isExternal: data.isextline ? true : false,
 
-                        chainId: data.chainId,
+						chainId: data.chainId,
 
 						phone: data.number ? data.number.toString() : ( data.calledid ? data.callerid.toString() : undefined ),
 						phoneFormatted: data.number ? formatPhone( data.number.toString() ) : undefined,
@@ -3861,7 +3946,7 @@ Oktell = (function(){
 
 				sendOktell( 'pbxautocallstart', params, function( data ) {
 //					that.loadStates(function(){
-						callFunc(callback,data);
+					callFunc(callback,data);
 //					});
 				});
 			},
@@ -4410,7 +4495,7 @@ Oktell = (function(){
 			dtmf: function(code) {
 				if ( ! this.sipActive || typeof code != 'string' || !code.match(/^[0-9\*#]{1}$/) ) {
 					return false;
-			}
+				}
 				return this.sip.dtmf(code);
 			},
 
@@ -4452,11 +4537,11 @@ Oktell = (function(){
 		pa['-'] = {}
 		pa[phone.states.DISCONNECTED] = {};
 		pa[phone.states.BACKCALL] = { endCall: 1 };
-		pa[phone.states.BACKRING] = { endCall: 1 };
+		pa[phone.states.BACKRING] = { endCall: 1, answer: 1 };
 		pa[phone.states.CALL] = { endCall: 1, conference: 1, call: 1, intercom: 1, transfer: 1 };
 		pa[phone.states.READY] = { conference: 1, call: 1, intercom: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1, transfer: 1, toggle: 1, endCall: 1, resume: 1 };
 		pa[phone.states.RING] = { endCall: 1, answer: 1 };
-		pa[phone.states.TALK] = { endCall: 1, conference: 1, call: 1, resume: 1, hold: 0, intercom: 1, toggle: 1, transfer: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1 };
+		pa[phone.states.TALK] = { endCall: 1, conference: 1, call: 1, resume: 1, hold: 1, intercom: 1, toggle: 1, transfer: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1 };
 		//pa[phone.states.CALLWEBPHONE] = { };
 
 		/**
@@ -4469,7 +4554,7 @@ Oktell = (function(){
 		pau[userStates.states.READY] = {endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1, resume:1};
 		pau[userStates.states.BREAK] = {endCall: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, ghostListen: 1, resume: 1, ghostHelp: 1, ghostConference: 1};
 		pau[userStates.states.OFF] = {endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1};
-		pau[userStates.states.BUSY] = {answer: 1, endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, hold: 0, ghostListen: 1, ghostHelp: 1, ghostConference: 1};
+		pau[userStates.states.BUSY] = {answer: 1, endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, hold: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1};
 		pau[userStates.states.RESERVED] = {};
 		pau[userStates.states.NOPHONE] = {};
 
@@ -4525,19 +4610,20 @@ Oktell = (function(){
 			var iAmAbonent = isConf && phone.isAbonent( oktellInfo.userid );
 			var iAmCreator = isConf && iAmAbonent && iAmAbonent.isConferenceCreator;
 			var phoneState = phone.state();
+			var intercomSupport = phone.intercomSupport;
 
 			if ( isInQueue ) {
 
 			} else if ( isMe ) {
 				if ( phoneState != phone.states.DISCONNECTED && phoneState != phone.states.READY ) {
-					if ( phone.sipActive ) {
+					if ( ( phoneState == phone.states.RING || phoneState == phone.states.BACKRING ) && ( phone.sipActive || intercomSupport !== false ) ) {
 						a.push('answer');
 					}
 					a.push('endCall');
 				}
 			} else if ( ! obj || ( obj && obj.state !== undefined && obj.state != 0 ) ) {
 				if ( hold ) {
-					if ( phone.sipActive && phoneState == phone.states.READY ) {
+					if ( phone.sipActive && hasHold ) {
 						a.push('resume');
 					} else {
 						a.push('toggle', 'endCall'); // toogle and connect current with hold, and disconnect myself
@@ -4567,7 +4653,7 @@ Oktell = (function(){
 						a.push('ghostListen', 'ghostHelp', 'ghostConference');
 					}
 				} else if ( abonent ) {
-					if ( phone.sipActive && phoneState == phone.states.RING ) {
+					if ( ( phoneState == phone.states.RING || phoneState == phone.states.BACKRING ) && ( phone.sipActive || intercomSupport !== false ) ) {
 						a.push('answer');
 					}
 					if ( isConf ) {
@@ -4794,6 +4880,9 @@ Oktell = (function(){
 									oktellInfo.allowedProcedures = data.alloweddbstoredprocs || {};
 									oktellInfo.oktellWebServerPort = data.version.webserverport;
 									oktellInfo.oktellWebServerLink = getWebServerLink();
+									if ( ! isValidMethodVersion('pbxanswercall') ) {
+										phone.intercomSupport = false;
+									}
 									sendOktell('getmyuserinfo', {}, function(data){
 										if ( data.result ) {
 											oktellInfo.number = data.mainpbxnumber;
@@ -5017,6 +5106,7 @@ Oktell = (function(){
 
 			server.bindOktellEvent('phoneevent_commstarted', function(data){
 				phone.startTalkTimer(0);
+				phone.currentSessionData.commStarted = true;
 				if ( data.isconference ) {
 					if ( phone.buildConfFromCommCallback ) {
 						phone.isConfCreator(true);
@@ -5033,19 +5123,16 @@ Oktell = (function(){
 					});
 				} else {
 					setTimeout(function(){
-						phone.loadStates(function(){}, {
-							commStarted: true
-						});
+						phone.loadStates(function(){});
 					}, 700);
 				}
 			});
 
 			server.bindOktellEvent('phoneevent_commstopped', function(data){
 				phone.clearTalkTimer();
+				phone.currentSessionData.commStopped = true;
 				setTimeout(function(){
-					phone.loadStates(function(){}, {
-						commStopped: true
-					});
+					phone.loadStates(function(){});
 				}, 700);
 			});
 
@@ -5227,7 +5314,7 @@ Oktell = (function(){
 
 		}
 
-		self.version = '1.6.0';
+		self.version = '1.7.1';
 
 	};
 	extend( Oktell.prototype , Events );

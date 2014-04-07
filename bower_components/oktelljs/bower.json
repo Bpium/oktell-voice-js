@@ -1,6 +1,6 @@
 {
   "name": "oktelljs",
-  "version": "1.6.0",
+  "version": "1.7.1",
   "authors": [
     "airato <airato.a@gmail.com>"
   ],
@@ -17,5 +17,9 @@
     "!build/**/*",
     "!bower.json",
     "!README.md"
-  ]
+  ],
+  "devDependencies": {
+    "lodash": "~2.4.0",
+    "jquery": "~2.0.3"
+  }
 }

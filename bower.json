@@ -23,5 +23,10 @@
   ],
   "dependencies": {
     "oktelljs": "https://git.oktell.ru/web/oktelljs.git#~1"
+  },
+  "devDependencies": {
+    "oktelljs": "https://git.oktell.ru/web/oktelljs.git#master",
+    "jquery": "~1",
+	  "webpanel": "https://github.com/airato/webpanel.git#master"
   }
 }

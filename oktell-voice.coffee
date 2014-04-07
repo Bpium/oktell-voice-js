@@ -120,6 +120,8 @@ oktellVoice = do ->
 			log @getName() + ' dtmf', arguments
 		hold: ->
 			log @getName() + ' hold', arguments
+		isOnHold: ->
+			log @getName() + ' isOnHold', arguments
 		resume: ->
 			log @getName() + ' resume', arguments
 		reject: ->
@@ -129,179 +131,6 @@ oktellVoice = do ->
 		isConnected: ->
 			@connected
 	extend Account.prototype, events
-
-	class SIPml5Account extends Account
-		constructor: ->
-			super
-			@name = 'SIPml5 account'
-		createFantomAbonent:  (newSession)->
-			caller = if typeof newSession == 'string' or typeof newSession == 'number' then newSession else newSession.getRemoteFriendlyName()
-			abonents = [{phone: caller.toString(), name: caller.toString()}]
-			return abonents
-		sipStack: false
-		goLogin: ->
-			@registerSession = @sipStack.newSession 'register',
-				events_listener:
-					events: '*',
-					listener: (e)=>
-						log 'registerSession event = ' + e.type
-						if e.session is @registerSession
-							if e.type is 'connected'
-								@connected = true
-								@trigger 'connect'
-								#oktell.trigger 'phoneRegistered'
-							else if e.type is 'terminated'
-								@connected = false
-								@trigger 'disconnect'
-
-
-			@registerSession.register()
-		createAudioElement: ->
-			@el = document.createElement 'audio'
-			@elId = 'oktellVoice_sipml5_' + Date.now()
-			@el.setAttribute 'id', @elId
-		connect: ->
-			if not super then return false
-			@createAudioElement() unless @el
-			@sip.debugMode = debugMode
-			@sip.init (e)=>
-				@sipStack = new @sip.Stack
-					realm: @server #mandatory: domain name
-					impi: @login # mandatory: authorization name (IMS Private Identity)
-					impu: 'sip:' + @login + '@' + @server # mandatory: valid SIP Uri (IMS Public Identity)
-					password: @pass # optional
-					display_name: @login # optional
-					ice_servers: [{"url":"stun:stun.l.google.com:19302"}]
-					websocket_proxy_url: 'ws://'+@server+':'+@port # optional
-					outbound_proxy_url: 'udp://'+@server+':'+@port # optional
-					enable_rtcweb_breaker: false # optional
-					events_listener:
-						events: '*'
-						listener: (e)=>
-							log 'sipStack event = ' + e.type
-							switch e.type
-								when 'started'
-									@goLogin()
-								when 'i_new_call'
-#									if @currentSession
-#										e.newSession.hangup()
-#										return
-
-									abonents = @createFantomAbonent e.newSession
-									#oktell.trigger 'phoneRingStart', abonents
-									#oktell.trigger 'abonentsChange', abonents
-									@currentSession = e.newSession
-									session = @currentSession
-									session.setConfiguration
-										audio_remote: @el
-										events_listener:
-											events: '*',
-											listener: (e) =>
-												log 'INCOMING session event!!! ' + e.type
-												if e.type is 'connected'
-													abonents = @createFantomAbonent session
-													#oktell.trigger 'phoneTalkStart'
-													session.eventTalkStart = true
-													@trigger 'talkStart', session.getRemoteFriendlyName()
-												else if e.type is 'terminated'
-													#oktell.trigger 'phoneSessionStop'
-													if session.eventRingStart and not session.eventRingStop
-														session.eventRingStop = true
-														@trigger 'ringStop', session.getRemoteFriendlyName()
-													if session.eventTalkStart
-														session.eventTalkStop = true
-														@trigger 'talkStop', session.getRemoteFriendlyName()
-													@currentSession = false
-													@trigger 'sessionClose'
-									session.eventRingStart = true
-									@trigger 'ringStart', session.getRemoteFriendlyName()
-								when 'm_permission_requested'
-									if not okVoice.getUserMediaStream()
-										okVoice.trigger 'mediaPermissionsRequest'
-								when 'm_permission_accepted'
-									if not okVoice.getUserMediaStream()
-										okVoice.trigger 'mediaPermissionsAccept'
-								when 'm_permission_refused'
-									if not okVoice.getUserMediaStream()
-										okVoice.trigger 'mediaPermissionsRefuse'
-
-					sip_headers: [ # optional
-						{ name: 'User-Agent', value: 'Oktell WebRTC' }
-						{ name: 'Organization', value: 'Oktell' }
-					]
-				@sipStack.start()
-			, (e)=>
-				logErr('Failed to initialize the engine: ' + e.message)
-
-		call: (number) ->
-			if not super then return false
-			number = number.toString()
-			session = @sipStack.newSession 'call-audio',
-				audio_remote: @el
-				events_listener:
-					events: '*'
-					listener: (e)=>
-						if @currentSession is e.session
-							log '!! callSession event = ' + e.type
-							if e.type is 'terminated'
-								#oktell.trigger 'phoneSessionStop'
-								if session.eventTalkStart
-									session.eventTalkStop = true
-									@trigger 'talkStop', session.getRemoteFriendlyName()
-								@currentSession = false
-								@trigger 'sessionClose'
-							else if e.type is 'connected'
-								abonents = @createFantomAbonent e.session
-								#oktell.trigger 'phoneTalkStart'
-								if session.eventCallStart and not session.eventCallStop
-									session.eventCallStop = true
-									@trigger 'callStop', session.getRemoteFriendlyName()
-								session.eventTalkStart = true
-								@trigger 'talkStart', session.getRemoteFriendlyName()
-
-			@currentSession = session
-			abonents = @createFantomAbonent number
-			#oktell.trigger 'phoneCallStart', abonents
-			#oktell.startCallWebRTC number
-			session.eventCallStart = true
-			@trigger 'callStart', number
-			@currentSession.call number
-
-		answer: ->
-			super
-			@currentSession?.accept?()
-
-		hangup: ->
-			super
-			@currentSession?.hangup?()
-
-		reject: ->
-			super
-			@currentSession?.reject?()
-		hold: ->
-			super
-			#@holdedSession = @currentSession
-			@currentSession?.hold?()
-
-		resume: ->
-			super
-			@currentSession?.resume?()
-			#@holdedSession?.resume?()
-
-		dtmf: (digit) ->
-			super
-			@currentSession?.dtmf?(digit)
-
-		transfer: (to) ->
-			if not super then return false
-			@currentSession?.transfer?(to.toString())
-
-		disconnect: ->
-			@sipStack.stop()
-			setTimeout ->
-				location.reload()
-			, 500
-
 
 	class JsSIPAccount extends Account
 		constructor: ->
@@ -339,7 +168,10 @@ oktellVoice = do ->
 
 			@UA.on 'connected', (e)=>
 				log 'connected', e
-				#@trigger 'connect'
+				@connected = true
+				if not @connectedFired
+					@connectedFired = true
+					@trigger 'connect'
 			@UA.on 'disconnected', (e)=>
 				@connectedFired = false
 				log 'disconnected', e
@@ -439,9 +271,14 @@ oktellVoice = do ->
 			#@holdedSession = @currentSession
 			@currentSession?.hold?()
 
+		isOnHold: ->
+			super
+			#@holdedSession = @currentSession
+			@currentSession?.isOnHold?()
+
 		resume: ->
 			super
-			@currentSession?.resume?()
+			@currentSession?.unhold?()
 		#@holdedSession?.resume?()
 
 		dtmf: (digit) ->
@@ -506,18 +343,16 @@ oktellVoice = do ->
 		accounts: []
 		defaultAcc: null
 		defaultOptions:
-			typeName: 'jssip' #'sipml5'
+			typeName: 'jssip'
 			debugMode: false
 
 		getSipObject: (typeName) ->
 			switch typeName
-				when 'sipml5' then window.SIPmlCreate()
 				when 'jssip' then window.JsSIP
 		getClassByTypeName: (name)->
 			switch name
-				when 'sipml5' then SIPml5Account
 				when 'jssip' then JsSIPAccount
-		exportKeys: ['call', 'answer', 'hangup', 'transfer', 'hold', 'resume', 'dtmf', 'reject', 'disconnect', 'isConnected']
+		exportKeys: ['call', 'answer', 'hangup', 'transfer', 'hold', 'isOnHold', 'resume', 'dtmf', 'reject', 'disconnect', 'isConnected']
 		createExportAccount: (account) ->
 			if not account? then return false
 			a = {}
