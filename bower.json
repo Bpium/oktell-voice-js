@@ -6,7 +6,7 @@
   ],
   "description": "WebRTC sip-phone for Oktell.js",
   "main": "oktell-voice.js",
-  "homepage": "https://git.oktell.ru/web/oktell-voice",
+  "homepage": "https://github.com/telsystems/webpanel",
   "private": true,
   "ignore": [
     "**/.*",
@@ -22,6 +22,6 @@
     "old"
   ],
   "dependencies": {
-    "oktelljs": "https://git.oktell.ru/web/oktelljs.git#~1"
+    "oktelljs": "https://github.com/telsystems/oktelljs.git#~1"
   }
 }
