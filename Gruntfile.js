@@ -32,7 +32,7 @@
           },
           files: [
             {
-              src: ['jssip-0.4.0-devel.js', '<%= myConf.build %>/oktell-voice.js'],
+              src: ['jssip-0.3.7.js', '<%= myConf.build %>/oktell-voice.js'],
               dest: '<%= myConf.build %>/oktell-voice.js'
             }
           ]

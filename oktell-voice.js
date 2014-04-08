@@ -5,7 +5,7 @@ var oktellVoice,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 oktellVoice = (function() {
-  var Account, JsSIPAccount, currentAcc, debugMode, eventSplitter, events, extend, key, log, logErr, logStr, manager, okVoice, userMedia, _i, _len, _ref;
+  var Account, JsSIPAccount, SIPml5Account, currentAcc, debugMode, eventSplitter, events, extend, key, log, logErr, logStr, manager, okVoice, userMedia, _i, _len, _ref;
   debugMode = false;
   logStr = '';
   log = function() {
@@ -221,10 +221,6 @@ oktellVoice = (function() {
       return log(this.getName() + ' hold', arguments);
     };
 
-    Account.prototype.isOnHold = function() {
-      return log(this.getName() + ' isOnHold', arguments);
-    };
-
     Account.prototype.resume = function() {
       return log(this.getName() + ' resume', arguments);
     };
@@ -245,6 +241,253 @@ oktellVoice = (function() {
 
   })();
   extend(Account.prototype, events);
+  SIPml5Account = (function(_super) {
+    __extends(SIPml5Account, _super);
+
+    function SIPml5Account() {
+      SIPml5Account.__super__.constructor.apply(this, arguments);
+      this.name = 'SIPml5 account';
+    }
+
+    SIPml5Account.prototype.createFantomAbonent = function(newSession) {
+      var abonents, caller;
+      caller = typeof newSession === 'string' || typeof newSession === 'number' ? newSession : newSession.getRemoteFriendlyName();
+      abonents = [
+        {
+          phone: caller.toString(),
+          name: caller.toString()
+        }
+      ];
+      return abonents;
+    };
+
+    SIPml5Account.prototype.sipStack = false;
+
+    SIPml5Account.prototype.goLogin = function() {
+      this.registerSession = this.sipStack.newSession('register', {
+        events_listener: {
+          events: '*',
+          listener: (function(_this) {
+            return function(e) {
+              log('registerSession event = ' + e.type);
+              if (e.session === _this.registerSession) {
+                if (e.type === 'connected') {
+                  _this.connected = true;
+                  return _this.trigger('connect');
+                } else if (e.type === 'terminated') {
+                  _this.connected = false;
+                  return _this.trigger('disconnect');
+                }
+              }
+            };
+          })(this)
+        }
+      });
+      return this.registerSession.register();
+    };
+
+    SIPml5Account.prototype.createAudioElement = function() {
+      this.el = document.createElement('audio');
+      this.elId = 'oktellVoice_sipml5_' + Date.now();
+      return this.el.setAttribute('id', this.elId);
+    };
+
+    SIPml5Account.prototype.connect = function() {
+      if (!SIPml5Account.__super__.connect.apply(this, arguments)) {
+        return false;
+      }
+      if (!this.el) {
+        this.createAudioElement();
+      }
+      this.sip.debugMode = debugMode;
+      return this.sip.init((function(_this) {
+        return function(e) {
+          _this.sipStack = new _this.sip.Stack({
+            realm: _this.server,
+            impi: _this.login,
+            impu: 'sip:' + _this.login + '@' + _this.server,
+            password: _this.pass,
+            display_name: _this.login,
+            ice_servers: [
+              {
+                "url": "stun:stun.l.google.com:19302"
+              }
+            ],
+            websocket_proxy_url: 'ws://' + _this.server + ':' + _this.port,
+            outbound_proxy_url: 'udp://' + _this.server + ':' + _this.port,
+            enable_rtcweb_breaker: false,
+            events_listener: {
+              events: '*',
+              listener: function(e) {
+                var abonents, session;
+                log('sipStack event = ' + e.type);
+                switch (e.type) {
+                  case 'started':
+                    return _this.goLogin();
+                  case 'i_new_call':
+                    abonents = _this.createFantomAbonent(e.newSession);
+                    _this.currentSession = e.newSession;
+                    session = _this.currentSession;
+                    session.setConfiguration({
+                      audio_remote: _this.el,
+                      events_listener: {
+                        events: '*',
+                        listener: function(e) {
+                          log('INCOMING session event!!! ' + e.type);
+                          if (e.type === 'connected') {
+                            abonents = _this.createFantomAbonent(session);
+                            session.eventTalkStart = true;
+                            return _this.trigger('talkStart', session.getRemoteFriendlyName());
+                          } else if (e.type === 'terminated') {
+                            if (session.eventRingStart && !session.eventRingStop) {
+                              session.eventRingStop = true;
+                              _this.trigger('ringStop', session.getRemoteFriendlyName());
+                            }
+                            if (session.eventTalkStart) {
+                              session.eventTalkStop = true;
+                              _this.trigger('talkStop', session.getRemoteFriendlyName());
+                            }
+                            _this.currentSession = false;
+                            return _this.trigger('sessionClose');
+                          }
+                        }
+                      }
+                    });
+                    session.eventRingStart = true;
+                    return _this.trigger('ringStart', session.getRemoteFriendlyName());
+                  case 'm_permission_requested':
+                    if (!okVoice.getUserMediaStream()) {
+                      return okVoice.trigger('mediaPermissionsRequest');
+                    }
+                    break;
+                  case 'm_permission_accepted':
+                    if (!okVoice.getUserMediaStream()) {
+                      return okVoice.trigger('mediaPermissionsAccept');
+                    }
+                    break;
+                  case 'm_permission_refused':
+                    if (!okVoice.getUserMediaStream()) {
+                      return okVoice.trigger('mediaPermissionsRefuse');
+                    }
+                }
+              }
+            },
+            sip_headers: [
+              {
+                name: 'User-Agent',
+                value: 'Oktell WebRTC'
+              }, {
+                name: 'Organization',
+                value: 'Oktell'
+              }
+            ]
+          });
+          return _this.sipStack.start();
+        };
+      })(this), (function(_this) {
+        return function(e) {
+          return logErr('Failed to initialize the engine: ' + e.message);
+        };
+      })(this));
+    };
+
+    SIPml5Account.prototype.call = function(number) {
+      var abonents, session;
+      if (!SIPml5Account.__super__.call.apply(this, arguments)) {
+        return false;
+      }
+      number = number.toString();
+      session = this.sipStack.newSession('call-audio', {
+        audio_remote: this.el,
+        events_listener: {
+          events: '*',
+          listener: (function(_this) {
+            return function(e) {
+              var abonents;
+              if (_this.currentSession === e.session) {
+                log('!! callSession event = ' + e.type);
+                if (e.type === 'terminated') {
+                  if (session.eventTalkStart) {
+                    session.eventTalkStop = true;
+                    _this.trigger('talkStop', session.getRemoteFriendlyName());
+                  }
+                  _this.currentSession = false;
+                  return _this.trigger('sessionClose');
+                } else if (e.type === 'connected') {
+                  abonents = _this.createFantomAbonent(e.session);
+                  if (session.eventCallStart && !session.eventCallStop) {
+                    session.eventCallStop = true;
+                    _this.trigger('callStop', session.getRemoteFriendlyName());
+                  }
+                  session.eventTalkStart = true;
+                  return _this.trigger('talkStart', session.getRemoteFriendlyName());
+                }
+              }
+            };
+          })(this)
+        }
+      });
+      this.currentSession = session;
+      abonents = this.createFantomAbonent(number);
+      session.eventCallStart = true;
+      this.trigger('callStart', number);
+      return this.currentSession.call(number);
+    };
+
+    SIPml5Account.prototype.answer = function() {
+      var _ref;
+      SIPml5Account.__super__.answer.apply(this, arguments);
+      return (_ref = this.currentSession) != null ? typeof _ref.accept === "function" ? _ref.accept() : void 0 : void 0;
+    };
+
+    SIPml5Account.prototype.hangup = function() {
+      var _ref;
+      SIPml5Account.__super__.hangup.apply(this, arguments);
+      return (_ref = this.currentSession) != null ? typeof _ref.hangup === "function" ? _ref.hangup() : void 0 : void 0;
+    };
+
+    SIPml5Account.prototype.reject = function() {
+      var _ref;
+      SIPml5Account.__super__.reject.apply(this, arguments);
+      return (_ref = this.currentSession) != null ? typeof _ref.reject === "function" ? _ref.reject() : void 0 : void 0;
+    };
+
+    SIPml5Account.prototype.hold = function() {
+      var _ref;
+      SIPml5Account.__super__.hold.apply(this, arguments);
+      return (_ref = this.currentSession) != null ? typeof _ref.hold === "function" ? _ref.hold() : void 0 : void 0;
+    };
+
+    SIPml5Account.prototype.resume = function() {
+      var _ref;
+      SIPml5Account.__super__.resume.apply(this, arguments);
+      return (_ref = this.currentSession) != null ? typeof _ref.resume === "function" ? _ref.resume() : void 0 : void 0;
+    };
+
+    SIPml5Account.prototype.dtmf = function(digit) {
+      var _ref;
+      SIPml5Account.__super__.dtmf.apply(this, arguments);
+      return (_ref = this.currentSession) != null ? typeof _ref.dtmf === "function" ? _ref.dtmf(digit) : void 0 : void 0;
+    };
+
+    SIPml5Account.prototype.transfer = function(to) {
+      var _ref;
+      if (!SIPml5Account.__super__.transfer.apply(this, arguments)) {
+        return false;
+      }
+      return (_ref = this.currentSession) != null ? typeof _ref.transfer === "function" ? _ref.transfer(to.toString()) : void 0 : void 0;
+    };
+
+    SIPml5Account.prototype.disconnect = function() {
+      this.sipStack.stop();
+      return setTimeout(function() {
+        return location.reload();
+      }, 500);
+    };
+
+    return SIPml5Account;
+
+  })(Account);
   JsSIPAccount = (function(_super) {
     __extends(JsSIPAccount, _super);
 
@@ -299,12 +542,7 @@ oktellVoice = (function() {
       window.sipua = this.UA;
       this.UA.on('connected', (function(_this) {
         return function(e) {
-          log('connected', e);
-          _this.connected = true;
-          if (!_this.connectedFired) {
-            _this.connectedFired = true;
-            return _this.trigger('connect');
-          }
+          return log('connected', e);
         };
       })(this));
       this.UA.on('disconnected', (function(_this) {
@@ -449,16 +687,10 @@ oktellVoice = (function() {
       return (_ref = this.currentSession) != null ? typeof _ref.hold === "function" ? _ref.hold() : void 0 : void 0;
     };
 
-    JsSIPAccount.prototype.isOnHold = function() {
-      var _ref;
-      JsSIPAccount.__super__.isOnHold.apply(this, arguments);
-      return (_ref = this.currentSession) != null ? typeof _ref.isOnHold === "function" ? _ref.isOnHold() : void 0 : void 0;
-    };
-
     JsSIPAccount.prototype.resume = function() {
       var _ref;
       JsSIPAccount.__super__.resume.apply(this, arguments);
-      return (_ref = this.currentSession) != null ? typeof _ref.unhold === "function" ? _ref.unhold() : void 0 : void 0;
+      return (_ref = this.currentSession) != null ? typeof _ref.resume === "function" ? _ref.resume() : void 0 : void 0;
     };
 
     JsSIPAccount.prototype.dtmf = function(digit) {
@@ -538,17 +770,21 @@ oktellVoice = (function() {
     },
     getSipObject: function(typeName) {
       switch (typeName) {
+        case 'sipml5':
+          return window.SIPmlCreate();
         case 'jssip':
           return window.JsSIP;
       }
     },
     getClassByTypeName: function(name) {
       switch (name) {
+        case 'sipml5':
+          return SIPml5Account;
         case 'jssip':
           return JsSIPAccount;
       }
     },
-    exportKeys: ['call', 'answer', 'hangup', 'transfer', 'hold', 'isOnHold', 'resume', 'dtmf', 'reject', 'disconnect', 'isConnected'],
+    exportKeys: ['call', 'answer', 'hangup', 'transfer', 'hold', 'resume', 'dtmf', 'reject', 'disconnect', 'isConnected'],
     createExportAccount: function(account) {
       var a, key, _i, _len, _ref;
       if (account == null) {
