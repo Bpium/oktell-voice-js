@@ -1,0 +1,31 @@
+{
+  "name": "oktell-panel",
+  "version": "0.3.5",
+  "authors": [
+    "airato <airato.a@gmail.com>"
+  ],
+  "description": "Web-panel jquery plugin for Oktell.js",
+  "main": "build/oktell-panel.js",
+  "license": "MIT",
+  "homepage": "https://git.oktell.ru/web/webpanel",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "**/*",
+    "!README.md",
+    "!build/**/*",
+    "!bower.json"
+  ],
+  "dependencies": {
+    "oktelljs": "https://git.oktell.ru/web/oktelljs.git#~1",
+    "oktell-voice": "https://git.oktell.ru/web/oktell-voice.git#~0.2",
+    "jquery": "~1"
+  },
+  "devDependencies": {
+	  "jquery": "~1.7"
+  }
+}
