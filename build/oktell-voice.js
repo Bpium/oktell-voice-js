@@ -4018,7 +4018,7 @@ RTCMediaHandler.prototype = {
       this.peerConnection.close();
 
       if(this.localMedia) {
-//        this.localMedia.stop();
+        this.localMedia.stop();
       }
     }
   },
@@ -21758,6 +21758,10 @@ oktellVoice = (function() {
       return log(this.getName() + ' hold', arguments);
     };
 
+    Account.prototype.isOnHold = function() {
+      return log(this.getName() + ' isOnHold', arguments);
+    };
+
     Account.prototype.resume = function() {
       return log(this.getName() + ' resume', arguments);
     };
@@ -21965,10 +21969,16 @@ oktellVoice = (function() {
       return (_ref = this.currentSession) != null ? typeof _ref.hold === "function" ? _ref.hold() : void 0 : void 0;
     };
 
+    JsSIPAccount.prototype.isOnHold = function() {
+      var _ref;
+      JsSIPAccount.__super__.isOnHold.apply(this, arguments);
+      return (_ref = this.currentSession) != null ? typeof _ref.isOnHold === "function" ? _ref.isOnHold() : void 0 : void 0;
+    };
+
     JsSIPAccount.prototype.resume = function() {
       var _ref;
       JsSIPAccount.__super__.resume.apply(this, arguments);
-      return (_ref = this.currentSession) != null ? typeof _ref.resume === "function" ? _ref.resume() : void 0 : void 0;
+      return (_ref = this.currentSession) != null ? typeof _ref.unhold === "function" ? _ref.unhold() : void 0 : void 0;
     };
 
     JsSIPAccount.prototype.dtmf = function(digit) {
@@ -22056,7 +22066,7 @@ oktellVoice = (function() {
           return JsSIPAccount;
       }
     },
-    exportKeys: ['call', 'answer', 'hangup', 'transfer', 'hold', 'resume', 'dtmf', 'reject', 'disconnect', 'isConnected'],
+    exportKeys: ['call', 'answer', 'hangup', 'transfer', 'hold', 'isOnHold', 'resume', 'dtmf', 'reject', 'disconnect', 'isConnected'],
     createExportAccount: function(account) {
       var a, key, _i, _len, _ref,
         _this = this;
@@ -22115,28 +22125,26 @@ oktellVoice = (function() {
   okVoice.connect = function() {
     var acc,
       _this = this;
-    if (currentAcc) {
-      if (!(currentAcc != null ? typeof currentAcc.isConnected === "function" ? currentAcc.isConnected() : void 0 : void 0)) {
-        currentAcc.connect();
+    if (currentAcc != null) {
+      if (typeof currentAcc.disconnect === "function") {
+        currentAcc.disconnect();
       }
-      return currentAcc;
-    } else {
-      acc = manager.createAccount.apply(manager, arguments);
-      currentAcc = manager.createExportAccount(acc);
-      if (acc === manager.defaultAcc) {
-        extend(okVoice, currentAcc);
-        currentAcc.on('all', function() {
-          var args;
-          args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-          return okVoice.trigger.apply(okVoice, args);
-        });
-        okVoice.on('all', function() {
-          var args, eventname;
-          eventname = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-        });
-      }
-      return currentAcc;
     }
+    acc = manager.createAccount.apply(manager, arguments);
+    currentAcc = manager.createExportAccount(acc);
+    if (acc === manager.defaultAcc) {
+      extend(okVoice, currentAcc);
+      currentAcc.on('all', function() {
+        var args;
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        return okVoice.trigger.apply(okVoice, args);
+      });
+      okVoice.on('all', function() {
+        var args, eventname;
+        eventname = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      });
+    }
+    return currentAcc;
   };
   okVoice.disconnect = function() {};
   okVoice.version = '0.2.0';

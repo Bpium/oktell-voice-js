@@ -383,21 +383,18 @@ oktellVoice = do ->
 
 	currentAcc = null
 	okVoice.connect = ->
-		# use one account only
-		if currentAcc
-			if not currentAcc?.isConnected?()
-				currentAcc.connect()
-			return currentAcc
-		else
-			acc = manager.createAccount.apply manager, arguments
-			currentAcc = manager.createExportAccount acc
-			if acc is manager.defaultAcc
-				extend okVoice, currentAcc
-				currentAcc.on 'all', (args...)=>
-					okVoice.trigger.apply okVoice, args
-				okVoice.on 'all', (eventname, args...)=>
-					#console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
-			currentAcc
+		# disconnect old acc and create new one
+		currentAcc?.disconnect?()
+
+		acc = manager.createAccount.apply manager, arguments
+		currentAcc = manager.createExportAccount acc
+		if acc is manager.defaultAcc
+			extend okVoice, currentAcc
+			currentAcc.on 'all', (args...)=>
+				okVoice.trigger.apply okVoice, args
+			okVoice.on 'all', (eventname, args...)=>
+				#console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
+		currentAcc
 
 	okVoice.disconnect = =>
 
