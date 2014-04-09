@@ -1,4 +1,4 @@
-oktellVoice = do ->
+window.oktellVoice = do ->
 
 	debugMode = false
 	logStr = ''
