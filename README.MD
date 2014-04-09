@@ -1,5 +1,5 @@
 # Oktell-Voice.js 
-WebRTC sip-телефон для [Oktell.js](https://git.oktell.ru/web/oktelljs "Oktell.js")
+WebRTC sip-телефон для [Oktell.js](https://github.com/telsystems/oktelljs "Oktell.js")
 
 ### Установка
-    bower install https://git.oktell.ru/web/oktell-voice.git#0.1.0 --save
+    bower install https://github.com/telsystems/oktell-voice.git#~0 --save
