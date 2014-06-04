@@ -4,7 +4,7 @@ module.exports = (grunt)->
 
 	myConf =
 		build: 'build'
-		version: '0.2.0'
+		version: require("./bower.json").version
 
 	grunt.initConfig
 		myConf: myConf

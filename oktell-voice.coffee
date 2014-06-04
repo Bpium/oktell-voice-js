@@ -399,6 +399,6 @@ window.oktellVoice = do ->
 
 	okVoice.disconnect = =>
 
-	okVoice.version = '0.2.0'
+	okVoice.version = '0.2.2'
 
 	return okVoice

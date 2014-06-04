@@ -636,7 +636,7 @@
     okVoice.disconnect = (function(_this) {
       return function() {};
     })(this);
-    okVoice.version = '0.2.0';
+    okVoice.version = '0.2.2';
     return okVoice;
   })();
 

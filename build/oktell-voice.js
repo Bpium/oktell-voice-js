@@ -1,6 +1,6 @@
 /*
  * Oktell-voice.js
- * version 0.2.0
+ * version 0.2.2
  * http://js.oktell.ru/js/voice/
  */
 
@@ -3364,6 +3364,9 @@ Registrator = function(ua, transport) {
 
   // Contact header
   this.contact = this.ua.contact.toString();
+
+  // sip.ice media feature tag (RFC 5768)
+  this.contact += ';+sip.ice';
   
   this.extraHeaders = [];
 
@@ -4018,7 +4021,7 @@ RTCMediaHandler.prototype = {
       this.peerConnection.close();
 
       if(this.localMedia) {
-        this.localMedia.stop();
+//        this.localMedia.stop();
       }
     }
   },
@@ -4702,13 +4705,16 @@ RTCSession.prototype.sendDTMF = function(tones, options) {
     throw new JsSIP.Exceptions.InvalidStateError(this.status);
   }
 
-  // Check tones
-  if (!tones || (typeof tones !== 'string' && typeof tones !== 'number') || !tones.toString().match(/^[0-9A-D#*,]+$/i)) {
-    throw new TypeError('Invalid tones: '+ tones);
+  // Convert to string
+  if(typeof tones === 'number') {
+    tones = tones.toString();
   }
 
-  tones = tones.toString();
-
+  // Check tones
+  if (!tones || typeof tones !== 'string' || !tones.match(/^[0-9A-D#*,]+$/i)) {
+    throw new TypeError('Invalid tones: '+ tones);
+  }
+ 
   // Check duration
   if (duration && !JsSIP.Utils.isDecimal(duration)) {
     throw new TypeError('Invalid tone duration: '+ duration);
@@ -6155,6 +6161,8 @@ Message.prototype.send = function(target, body, options) {
   eventHandlers = options.eventHandlers || {};
   contentType = options.contentType || 'text/plain';
 
+  this.content_type = contentType;
+
   // Set event handlers
   for (event in eventHandlers) {
     this.on(event, eventHandlers[event]);
@@ -6169,6 +6177,9 @@ Message.prototype.send = function(target, body, options) {
 
   if(body) {
     this.request.body = body;
+    this.content = body;
+  } else {
+    this.content = null;
   }
 
   request_sender = new JsSIP.RequestSender(this, this.ua);
@@ -6254,6 +6265,13 @@ Message.prototype.init_incoming = function(request) {
   var transaction;
 
   this.request = request;
+  this.content_type = request.getHeader('Content-Type');
+
+  if (request.body) {
+    this.content = request.body;
+  } else {
+    this.content = null;
+  }
 
   this.newMessage('remote', request);
 
@@ -21536,12 +21554,11 @@ module.exports = function (session, opts) {
 
 
 },{"sdp-transform":1}]},{},[5])
-var oktellVoice,
-  __slice = [].slice,
+var __slice = [].slice,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-oktellVoice = (function() {
+window.oktellVoice = (function() {
   var Account, JsSIPAccount, currentAcc, debugMode, eventSplitter, events, extend, key, log, logErr, logStr, manager, okVoice, userMedia, _i, _len, _ref,
     _this = this;
   debugMode = false;
@@ -22004,11 +22021,12 @@ oktellVoice = (function() {
   })(Account);
   userMedia = false;
   okVoice.isSupported = function() {
-    var isChrome, isOpera, isYaBrowser, _ref, _ref1;
+    var isChrome, isFirefox, isOpera, isYaBrowser, _ref, _ref1;
     isChrome = Boolean(navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/));
     isYaBrowser = parseInt((_ref = navigator.userAgent.match(/Chrome\/[0-9\.]+? YaBrowser\/([0-9]+)/)) != null ? _ref[1] : void 0) >= 14;
     isOpera = parseInt((_ref1 = navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+ OPR\/([0-9]+)/)) != null ? _ref1[1] : void 0) >= 20;
-    return isChrome || isYaBrowser || isOpera;
+    isFirefox = Boolean(navigator.userAgent.match(/Firefox\/[0-9\.]+/));
+    return isChrome || isYaBrowser || isOpera || isFirefox;
   };
   okVoice.createUserMedia = function(onSuccess, onDeny, useVideo) {
     var getUserMedia, hasDecision, triggerDeny;
@@ -22147,6 +22165,6 @@ oktellVoice = (function() {
     return currentAcc;
   };
   okVoice.disconnect = function() {};
-  okVoice.version = '0.2.0';
+  okVoice.version = '0.2.2';
   return okVoice;
 })();
