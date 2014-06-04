@@ -1,12 +1,11 @@
 {
   "name": "oktelljs",
-  "version": "1.7.1",
   "authors": [
     "airato <airato.a@gmail.com>"
   ],
   "description": "Oktell.js",
   "main": "oktell.js",
-  "homepage": "https://git.oktell.ru/web/oktelljs",
+  "homepage": "https://github.com/telsystems/oktelljs",
   "private": true,
   "ignore": [
     "**/.*",
@@ -22,13 +21,13 @@
     "lodash": "~2.4.0",
     "jquery": "~2.0.3"
   },
-  "_release": "1.7.1",
+  "_release": "3accba5684",
   "_resolution": {
-    "type": "version",
-    "tag": "v1.7.1",
-    "commit": "59bdb4e04575ccea68788bb7d913f23793a0309b"
+    "type": "branch",
+    "branch": "master",
+    "commit": "3accba5684a56c32b48ff8f8e274393551e142ae"
   },
-  "_source": "https://git.oktell.ru/web/oktelljs.git",
-  "_target": "~1",
-  "_originalSource": "https://git.oktell.ru/web/oktelljs.git"
+  "_source": "https://github.com/telsystems/oktelljs.git",
+  "_target": "master",
+  "_originalSource": "https://github.com/telsystems/oktelljs.git"
 }

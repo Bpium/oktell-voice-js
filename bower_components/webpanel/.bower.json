@@ -6,7 +6,7 @@
   "description": "Web-panel jquery plugin for Oktell.js",
   "main": "build/oktell-panel.js",
   "license": "MIT",
-  "homepage": "https://git.oktell.ru/web/webpanel",
+  "homepage": "https://github.com/telsystems/webpanel",
   "private": true,
   "ignore": [
     "**/.*",
@@ -20,20 +20,20 @@
     "!bower.json"
   ],
   "dependencies": {
-    "oktelljs": "https://git.oktell.ru/web/oktelljs.git#~1",
-    "oktell-voice": "https://git.oktell.ru/web/oktell-voice.git#~0.2",
+    "oktelljs": "https://github.com/telsystems/oktelljs.git#~1",
+    "oktell-voice": "https://github.com/telsystems/oktell-voice.git#~0.2",
     "jquery": "~1"
   },
   "devDependencies": {
     "jquery": "~1.7"
   },
-  "_release": "c1b1f91bd9",
+  "_release": "68201a7fdc",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "c1b1f91bd94f014f68c43640f61422fcf8da5740"
+    "commit": "68201a7fdc7388b737db0dd374969f42ab64637f"
   },
-  "_source": "https://github.com/airato/webpanel.git",
+  "_source": "https://github.com/telsystems/webpanel.git",
   "_target": "master",
-  "_originalSource": "https://github.com/airato/webpanel.git"
+  "_originalSource": "https://github.com/telsystems/webpanel.git"
 }

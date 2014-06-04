@@ -299,11 +299,12 @@ window.oktellVoice = do ->
 	userMedia = false
 
 	okVoice.isSupported = ->
-		# Supported Chrome, Yandex browser >=14, Opera >=20
+		# Supported Chrome, Yandex browser >=14, Opera >=20, Firefox
 		isChrome = Boolean navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/)
 		isYaBrowser = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? YaBrowser\/([0-9]+)/)?[1]) >= 14
 		isOpera = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+ OPR\/([0-9]+)/)?[1]) >= 20
-		return isChrome or isYaBrowser or isOpera
+		isFirefox = Boolean navigator.userAgent.match(/Firefox\/[0-9\.]+/)
+		return isChrome or isYaBrowser or isOpera or isFirefox
 
 	okVoice.createUserMedia = (onSuccess, onDeny, useVideo)=>
 		if userMedia

@@ -3358,6 +3358,9 @@ Registrator = function(ua, transport) {
 
   // Contact header
   this.contact = this.ua.contact.toString();
+
+  // sip.ice media feature tag (RFC 5768)
+  this.contact += ';+sip.ice';
   
   this.extraHeaders = [];
 
@@ -4012,7 +4015,7 @@ RTCMediaHandler.prototype = {
       this.peerConnection.close();
 
       if(this.localMedia) {
-        this.localMedia.stop();
+//        this.localMedia.stop();
       }
     }
   },
@@ -4696,13 +4699,16 @@ RTCSession.prototype.sendDTMF = function(tones, options) {
     throw new JsSIP.Exceptions.InvalidStateError(this.status);
   }
 
-  // Check tones
-  if (!tones || (typeof tones !== 'string' && typeof tones !== 'number') || !tones.toString().match(/^[0-9A-D#*,]+$/i)) {
-    throw new TypeError('Invalid tones: '+ tones);
+  // Convert to string
+  if(typeof tones === 'number') {
+    tones = tones.toString();
   }
 
-  tones = tones.toString();
-
+  // Check tones
+  if (!tones || typeof tones !== 'string' || !tones.match(/^[0-9A-D#*,]+$/i)) {
+    throw new TypeError('Invalid tones: '+ tones);
+  }
+ 
   // Check duration
   if (duration && !JsSIP.Utils.isDecimal(duration)) {
     throw new TypeError('Invalid tone duration: '+ duration);
@@ -6149,6 +6155,8 @@ Message.prototype.send = function(target, body, options) {
   eventHandlers = options.eventHandlers || {};
   contentType = options.contentType || 'text/plain';
 
+  this.content_type = contentType;
+
   // Set event handlers
   for (event in eventHandlers) {
     this.on(event, eventHandlers[event]);
@@ -6163,6 +6171,9 @@ Message.prototype.send = function(target, body, options) {
 
   if(body) {
     this.request.body = body;
+    this.content = body;
+  } else {
+    this.content = null;
   }
 
   request_sender = new JsSIP.RequestSender(this, this.ua);
@@ -6248,6 +6259,13 @@ Message.prototype.init_incoming = function(request) {
   var transaction;
 
   this.request = request;
+  this.content_type = request.getHeader('Content-Type');
+
+  if (request.body) {
+    this.content = request.body;
+  } else {
+    this.content = null;
+  }
 
   this.newMessage('remote', request);
 

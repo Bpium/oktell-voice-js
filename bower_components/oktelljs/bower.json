@@ -6,7 +6,7 @@
   ],
   "description": "Oktell.js",
   "main": "oktell.js",
-  "homepage": "https://git.oktell.ru/web/oktelljs",
+  "homepage": "https://github.com/telsystems/oktelljs",
   "private": true,
   "ignore": [
     "**/.*",

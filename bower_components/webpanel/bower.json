@@ -7,7 +7,7 @@
   "description": "Web-panel jquery plugin for Oktell.js",
   "main": "build/oktell-panel.js",
   "license": "MIT",
-  "homepage": "https://git.oktell.ru/web/webpanel",
+  "homepage": "https://github.com/telsystems/webpanel",
   "private": true,
   "ignore": [
     "**/.*",
@@ -21,8 +21,8 @@
     "!bower.json"
   ],
   "dependencies": {
-    "oktelljs": "https://git.oktell.ru/web/oktelljs.git#~1",
-    "oktell-voice": "https://git.oktell.ru/web/oktell-voice.git#~0.2",
+    "oktelljs": "https://github.com/telsystems/oktelljs.git#~1",
+    "oktell-voice": "https://github.com/telsystems/oktell-voice.git#~0.2",
     "jquery": "~1"
   },
   "devDependencies": {
