@@ -372,6 +372,11 @@ window.oktellVoice = do ->
 			accClass = @getClassByTypeName opts.typeName
 			if not sipObject or not accClass then return false
 			debugMode = Boolean opts.debugMode
+			# temp
+			#login  = location.href.match(/login=([^&]+)/)?[1]
+			#pass   = location.href.match(/pass=([^&]+)/)?[1]
+			#server = location.href.match(/server=([^&]+)/)?[1]
+			#acc = new accClass sipObject, login or opts.login, pass or opts.password, server or opts.server
 			acc = new accClass sipObject, opts.login, opts.password, opts.server
 			@defaultAcc ?= acc
 			acc.id = @accounts.length + 1

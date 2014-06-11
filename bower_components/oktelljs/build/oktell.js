@@ -1698,7 +1698,7 @@ Oktell = (function(){
 				callbacks[id] = callback;
 			}
 			if ( self.delayMin > 0 ) {
-				timeout = self.delayMin;
+				var timeout = self.delayMin;
 				if ( delayMax ) {
 					timeout = Math.round( Math.random() * Math.abs(self.delayMax - self.delayMin) + self.delayMin );
 				}
@@ -3196,7 +3196,7 @@ Oktell = (function(){
 			},
 
 
-			setSipphone: function(sip) {
+			setSipPhone: function(sip) {
 				var that = this;
 				that.sip = sip;
 				that.sip.on('connect', function(){
@@ -4549,7 +4549,7 @@ Oktell = (function(){
 		pa[phone.states.CALL] = { endCall: 1, conference: 1, call: 1, intercom: 1, transfer: 1 };
 		pa[phone.states.READY] = { conference: 1, call: 1, intercom: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1, transfer: 1, toggle: 1, endCall: 1, resume: 1 };
 		pa[phone.states.RING] = { endCall: 1, answer: 1 };
-		pa[phone.states.TALK] = { endCall: 1, conference: 1, call: 1, resume: 1, hold: 1, intercom: 1, toggle: 1, transfer: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1 };
+		pa[phone.states.TALK] = { endCall: 1, conference: 1, call: 1, resume: 1, hold: 0, intercom: 1, toggle: 1, transfer: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1 };
 		//pa[phone.states.CALLWEBPHONE] = { };
 
 		/**
@@ -4562,7 +4562,7 @@ Oktell = (function(){
 		pau[userStates.states.READY] = {endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1, resume:1};
 		pau[userStates.states.BREAK] = {endCall: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, ghostListen: 1, resume: 1, ghostHelp: 1, ghostConference: 1};
 		pau[userStates.states.OFF] = {endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1};
-		pau[userStates.states.BUSY] = {answer: 1, endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, hold: 1, ghostListen: 1, ghostHelp: 1, ghostConference: 1};
+		pau[userStates.states.BUSY] = {answer: 1, endCall: 1, conference: 1, call: 1, intercom: 1, toggle: 1, transfer: 1, resume: 1, hold: 0, ghostListen: 1, ghostHelp: 1, ghostConference: 1};
 		pau[userStates.states.RESERVED] = {};
 		pau[userStates.states.NOPHONE] = {};
 
@@ -4631,7 +4631,7 @@ Oktell = (function(){
 				}
 			} else if ( ! obj || ( obj && obj.state !== undefined && obj.state != 0 ) ) {
 				if ( hold ) {
-					if ( phone.sipActive && phoneState == phone.states.READY ) {
+					if ( phone.sipActive && phone.sip && typeof phone.sip.isOnHold === "function" && phone.sip.isOnHold() ) {
 						a.push('resume');
 					} else {
 						a.push('toggle', 'endCall'); // toogle and connect current with hold, and disconnect myself
@@ -4870,7 +4870,7 @@ Oktell = (function(){
 											sipPnoneActive = true;
 											self.trigger('webphoneDisconnect');
 										});
-										phone.setSipphone(sipPhone);
+										phone.setSipPhone(sipPhone);
 									}
 								}, 200);
 							}

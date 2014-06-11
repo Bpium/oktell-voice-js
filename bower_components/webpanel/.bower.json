@@ -27,11 +27,11 @@
   "devDependencies": {
     "jquery": "~1.7"
   },
-  "_release": "68201a7fdc",
+  "_release": "ed789febd9",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "68201a7fdc7388b737db0dd374969f42ab64637f"
+    "commit": "ed789febd9500f3006e771eef7852f7b73f932a4"
   },
   "_source": "https://github.com/telsystems/webpanel.git",
   "_target": "master",

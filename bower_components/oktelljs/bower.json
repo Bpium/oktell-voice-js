@@ -10,9 +10,6 @@
   "private": true,
   "ignore": [
     "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
     "**/*",
     "!build/**/*",
     "!bower.json",
@@ -20,6 +17,12 @@
   ],
   "devDependencies": {
     "lodash": "~2.4.0",
-    "jquery": "~2.0.3"
+    "jquery": "~2.0.3",
+    "webpanel": "https://github.com/telsystems/webpanel.git#master",
+    "oktell-voice": "https://github.com/telsystems/oktell-voice.git#~0.2"
+  },
+  "resolutions": {
+    "jquery": "~1",
+    "oktelljs": "~1"
   }
 }

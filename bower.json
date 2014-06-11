@@ -25,7 +25,6 @@
     "oktelljs": "https://github.com/telsystems/oktelljs.git#master"
   },
   "devDependencies": {
-    "oktelljs": "https://github.com/telsystems/oktelljs.git#master",
     "jquery": "~1",
     "webpanel": "https://github.com/telsystems/webpanel.git#master"
   },

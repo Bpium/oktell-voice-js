@@ -960,22 +960,18 @@ var __slice = [].slice,
 (function($) {
   var CUser, Department, Error, List, Notify, PermissionsPopup, Popup, actionButtonContainerClass, actionButtonHtml, actionListEl, actionListHtml, addActionButtonToEl, afterOktellConnect, checkCssAnimationSupport, contEl, cookie, debounce, defaultOptions, departmentTemplateHtml, error, errorHtml, escapeHtml, getOptions, initActionButtons, initButtonOnElement, initPanel, isMobileDevice, langs, list, loadTemplate, log, logStr, newGuid, oktell, oktellConnected, options, panelEl, panelHtml, panelWasInitialized, permissionsPopup, permissionsPopupHtml, popup, popupHtml, templates, useNativeScroll, useSticky, userTemplateHtml, usersTableHtml,
     _this = this;
-
   if (!$) {
     throw new Error('Error init oktell panel, jQuery ( $ ) is not defined');
   }
   debounce = function(func, wait, immediate) {
     var timeout;
-
     timeout = '';
     return function() {
       var args, callNow, context, later, result;
-
       context = this;
       args = arguments;
       later = function() {
         var result;
-
         timeout = null;
         if (!immediate) {
           return result = func.apply(context, args);
@@ -995,7 +991,6 @@ var __slice = [].slice,
   };
   log = function() {
     var e;
-
     try {
       return console.log.apply(console, arguments);
     } catch (_error) {
@@ -1004,7 +999,6 @@ var __slice = [].slice,
   };
   cookie = function(key, value, options) {
     var decode, result, seconds, t;
-
     if (arguments.length > 1 && String(value) !== "[object Object]") {
       options = $.extend({}, options);
       if (value == null) {
@@ -1036,7 +1030,6 @@ var __slice = [].slice,
   newGuid = function() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r, v;
-
       r = Math.random() * 16 | 0;
       v = c === 'x' ? r : r & 0x3 | 0x8;
       return v.toString(16);
@@ -1046,7 +1039,6 @@ var __slice = [].slice,
     function Notify(title, autoHide, message, group, onClick) {
       var notify,
         _this = this;
-
       if (autoHide == null) {
         autoHide = 0;
       }
@@ -1074,7 +1066,6 @@ var __slice = [].slice,
       }
       notify.onclick = function() {
         var args, e;
-
         e = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
         if (typeof window.focus === "function") {
           window.focus();
@@ -1126,7 +1117,6 @@ var __slice = [].slice,
 
     Department.prototype.showUsers = function(val, notSave) {
       var c;
-
       if (typeof val === 'undefined') {
         val = !this.isOpen;
       }
@@ -1183,7 +1173,6 @@ var __slice = [].slice,
 
     Department.prototype.getUsers = function(filter, showOffline, filterLang) {
       var exactMatch, u, users, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
-
       if (!this.isSorted) {
         this.sortUsers();
       }
@@ -1256,7 +1245,8 @@ var __slice = [].slice,
     CUser.prototype.logGroup = 'User';
 
     function CUser(data) {
-      this.doAction = __bind(this.doAction, this);      this.state = false;
+      this.doAction = __bind(this.doAction, this);
+      this.state = false;
       this.additionalActions = {};
       this.hasHover = false;
       this.buttonLastAction = '';
@@ -1269,7 +1259,6 @@ var __slice = [].slice,
 
     CUser.prototype.init = function(data) {
       var lastHtml, ns, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
-
       this.id = (_ref = data.id) != null ? _ref.toString().toLowerCase() : void 0;
       this.isFantom = data.isFantom || false;
       this.number = ((_ref1 = data.number) != null ? _ref1.toString() : void 0) || '';
@@ -1288,7 +1277,7 @@ var __slice = [].slice,
       this.isIvr = data.isIvr;
       this.ivrName = data.ivrName;
       ns = this.nameHtml.split(/\s+/);
-      if (ns.length > 1 && data.name.toString() !== this.number) {
+      if (ns.length > 1 && this.name.toString() !== this.number) {
         this.nameHtml1 = ns[0];
         this.nameHtml2 = ' ' + ns.splice(1).join(' ');
       } else {
@@ -1330,7 +1319,6 @@ var __slice = [].slice,
 
     CUser.prototype.setState = function(state) {
       var _this = this;
-
       state = parseInt(state);
       if (state === this.state) {
         return;
@@ -1360,7 +1348,6 @@ var __slice = [].slice,
 
     CUser.prototype.isFiltered = function(filter, showOffline, lang) {
       var fl;
-
       if ((!filter || typeof filter !== 'string') && (showOffline || (!showOffline && this.state !== 0))) {
         this.setSelection();
         return true;
@@ -1385,13 +1372,11 @@ var __slice = [].slice,
 
     CUser.prototype.showLetter = function(show) {
       var _ref;
-
       return (_ref = this.el) != null ? _ref.find('.b_capital_letter span').text(show ? this.letter : '') : void 0;
     };
 
     CUser.prototype.getEl = function(createIndependent) {
       var $el, str;
-
       if (!this.el || createIndependent) {
         str = this.template.replace(this.regexps.name1, this.nameHtml1).replace(this.regexps.name2, this.nameHtml2).replace(this.regexps.name, this.name + (this.numberHtml ? ' (' + this.numberHtml + ')' : '')).replace(this.regexps.number, this.numberHtml).replace(this.regexps.dtmf, this.langs.panel.dtmf).replace(this.regexps.avatarLink32x32, this.avatarLink32x32).replace(this.regexps.css, this.defaultAvatarCss);
         $el = $(str);
@@ -1413,7 +1398,6 @@ var __slice = [].slice,
 
     CUser.prototype.setSelection = function(str) {
       var rx;
-
       if (this.el != null) {
         if (!str) {
           if (this.elHasSelection) {
@@ -1434,7 +1418,6 @@ var __slice = [].slice,
 
     CUser.prototype.initButtonEl = function($el) {
       var _this = this;
-
       this.buttonEls = this.buttonEls.add($el);
       $el.data('user', this);
       $el.children(':first').bind('click', function() {
@@ -1449,7 +1432,6 @@ var __slice = [].slice,
 
     CUser.prototype.getButtonEl = function() {
       var $el;
-
       $el = $(this.buttonTemplate);
       this.initButtonEl($el);
       return $el;
@@ -1467,7 +1449,6 @@ var __slice = [].slice,
 
     CUser.prototype.loadOktellActions = function() {
       var action, actions, _ref;
-
       if (this.isIvr) {
         actions = ['endCall'];
       } else {
@@ -1493,7 +1474,6 @@ var __slice = [].slice,
 
     CUser.prototype.loadActions = function() {
       var action, actions, _ref;
-
       actions = this.loadOktellActions();
       _ref = this.additionalActions;
       for (action in _ref) {
@@ -1519,7 +1499,6 @@ var __slice = [].slice,
 
     CUser.prototype.doAction = function(action) {
       var target, _base, _base1, _base2, _base3;
-
       if (!action) {
         return;
       }
@@ -1650,7 +1629,6 @@ var __slice = [].slice,
 
     CUser.prototype.toRu = function(str) {
       var _this = this;
-
       return str.replace(/[A-z\/,.;\'\]\[]/g, function(x) {
         if (x === x.toLowerCase()) {
           return _this.replacerToRu[x];
@@ -1662,7 +1640,6 @@ var __slice = [].slice,
 
     CUser.prototype.toEn = function(str) {
       var _this = this;
-
       return str.replace(/[А-яёЁ]/g, function(x) {
         if (x === x.toLowerCase()) {
           return _this.replacerToEn[x];
@@ -1682,7 +1659,6 @@ var __slice = [].slice,
       this.onPbxNumberStateChange = __bind(this.onPbxNumberStateChange, this);
       var debouncedSetFilter, debouncedSetHeight, dropdownHideTimer, oktellConnected, ringNotify, self,
         _this = this;
-
       this.defaultConfig = {
         departmentVisibility: {},
         showDeps: true,
@@ -1829,7 +1805,6 @@ var __slice = [].slice,
       this.config();
       Department.prototype.config = function() {
         var args;
-
         args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
         return _this.config.apply(_this, args);
       };
@@ -1857,14 +1832,12 @@ var __slice = [].slice,
       this.initJScrollPane();
       this.reinitScroll = function() {
         var _ref;
-
         if (!_this.useNativeScroll) {
           return (_ref = _this.jScrollPaneAPI) != null ? _ref.reinitialise() : void 0;
         }
       };
       this.resetDepsWidth = function() {
         var w, _ref;
-
         if (!_this.useNativeScroll && !_this.contained && _this.scrollContent) {
           w = parseInt(_this.scrollContent.css('width'));
           _this.scrollContent.find('.b_department').css('width', w + 'px');
@@ -1901,7 +1874,6 @@ var __slice = [].slice,
           _this.filterInput.blur();
           setTimeout(function() {
             var _ref;
-
             if ((_ref = _this.scrollContent.find('tr:first').data('user')) != null) {
               _ref.doLastFirstAction();
             }
@@ -1914,7 +1886,6 @@ var __slice = [].slice,
       });
       this.panelEl.bind('click', function(e) {
         var actionButton, buttonEl, dep, target, useDtmfAsAction, user;
-
         target = $(e.target);
         if (target.is('.b_department_header') || target.parents('.b_department_header').size() > 0) {
           dep = target.parents('.b_department').data('department');
@@ -1956,7 +1927,6 @@ var __slice = [].slice,
       });
       this.dropdownEl.bind('click', function(e) {
         var action, actionEl, target, user;
-
         target = $(e.target);
         if (target.is('[data-action]')) {
           actionEl = target;
@@ -1998,7 +1968,6 @@ var __slice = [].slice,
       });
       this.setUserListHeight = function() {
         var h;
-
         h = $(window).height() - _this.usersListBlockEl[0].offsetTop + 'px';
         _this.usersListBlockEl.css({
           height: h
@@ -2025,7 +1994,6 @@ var __slice = [].slice,
       });
       oktell.on('disconnect', function() {
         var phone, user, _ref, _results;
-
         if (_this.options.hideOnDisconnect) {
           _this.hidePanel();
         }
@@ -2051,7 +2019,6 @@ var __slice = [].slice,
       });
       oktell.on('connect', function() {
         var createdDeps, dep, id, numObj, number, oId, oInfo, oNumbers, oUser, oUsers, otherDep, strNumber, user, _i, _len, _ref, _ref1, _ref2;
-
         _this.oktellConnected = true;
         oInfo = oktell.getMyInfo();
         oInfo.userid = oInfo.userid.toString().toLowerCase();
@@ -2219,7 +2186,6 @@ var __slice = [].slice,
 
     List.prototype.clearSelection = function() {
       var sel;
-
       if (document.selection && document.selection.empty) {
         return document.selection.empty();
       } else if (window.getSelection) {
@@ -2231,7 +2197,6 @@ var __slice = [].slice,
     List.prototype.initStickyHeaders = function() {
       var conTop, h, i, _i, _j, _len, _len1, _ref, _ref1,
         _this = this;
-
       if (!this.stickyHeaders) {
         return;
       }
@@ -2274,7 +2239,6 @@ var __slice = [].slice,
     List.prototype.processStickyHeaders = function(elIndex) {
       var conTop, curTop, nexTop, _ref, _ref1,
         _this = this;
-
       if (((_ref = this.headerEls) != null ? _ref.length : void 0) > 0) {
         if (elIndex != null) {
           if (elIndex < 0) {
@@ -2335,7 +2299,6 @@ var __slice = [].slice,
 
     List.prototype.resetStickyHeaders = function() {
       var _ref;
-
       if ((_ref = this.currentTopHeaderClone) != null) {
         if (typeof _ref.remove === "function") {
           _ref.remove();
@@ -2382,7 +2345,6 @@ var __slice = [].slice,
 
     List.prototype.showDtmf = function(dontAnimate) {
       var _this = this;
-
       if (this.oktell.getState() === 'talk' && this.panelEl.hasClass('webphone') && !this.panelEl.hasClass('dtmf')) {
         this.panelEl.addClass('dtmf');
         this.dtmfEl.stop(true, true);
@@ -2400,7 +2362,6 @@ var __slice = [].slice,
 
     List.prototype.hideDtmf = function(dontAnimate) {
       var _this = this;
-
       if (this.panelEl.hasClass('dtmf')) {
         this.panelEl.removeClass('dtmf');
         this.dtmfEl.stop(true, true);
@@ -2418,7 +2379,6 @@ var __slice = [].slice,
 
     List.prototype.onPbxNumberStateChange = function(data) {
       var dep, index, n, numStr, user, userNowIsFiltered, wasFiltered, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _results;
-
       _ref = data.numbers;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -2480,7 +2440,6 @@ var __slice = [].slice,
 
     List.prototype.hideActionListDropdown = function() {
       var _this = this;
-
       return this.dropdownEl.fadeOut(150, function() {
         return _this.dropdownOpenedOnPanel = false;
       });
@@ -2489,7 +2448,6 @@ var __slice = [].slice,
     List.prototype.showPanel = function(notAnimate) {
       var w,
         _this = this;
-
       if (this.contained) {
         if (notAnimate) {
           return this.panelEl.show();
@@ -2525,7 +2483,6 @@ var __slice = [].slice,
     List.prototype.hidePanel = function(notAnimate) {
       var w,
         _this = this;
-
       if (this.contained) {
         if (notAnimate) {
           return this.panelEl.hide();
@@ -2560,7 +2517,6 @@ var __slice = [].slice,
     List.prototype.getUserButtonForPlugin = function(phone) {
       var button, user,
         _this = this;
-
       user = this.getUser(phone);
       if (!this.oktellConnected) {
         this.usersWithBeforeConnectButtons.push(user);
@@ -2569,7 +2525,6 @@ var __slice = [].slice,
       button = user.getButtonEl();
       button.find('.drop_down').bind('click', function() {
         var actions;
-
         actions = user.loadActions();
         return _this.showDropdown(user, button, actions);
       });
@@ -2588,7 +2543,6 @@ var __slice = [].slice,
 
     List.prototype.setKeypadVisibility = function(visible) {
       var _this = this;
-
       if ((visible != null) && Boolean(this.keypadIsVisible) !== Boolean(visible)) {
         this.keypadIsVisible = Boolean(visible);
         this.keypadEl.stop(true, true);
@@ -2617,9 +2571,9 @@ var __slice = [].slice,
 
     List.prototype.addEventListenersForButton = function(user, button) {
       var _this = this;
-
       return button.bind('click', function() {
-        user;        if (user) {
+        user;
+        if (user) {
           return _this.showDropdown(user, $(_this));
         }
       });
@@ -2627,7 +2581,6 @@ var __slice = [].slice,
 
     List.prototype.showDropdown = function(user, buttonEl, actions, onPanel, useDtmfAsAction) {
       var a, aEls, t, _i, _len, _ref;
-
       t = this.dropdownElLiTemplate;
       this.dropdownEl.empty();
       if (useDtmfAsAction && !this.oktell.conferenceId()) {
@@ -2665,7 +2618,6 @@ var __slice = [].slice,
 
     List.prototype.logUsers = function() {
       var k, u, _ref, _results;
-
       _ref = this.panelUsersFiltered;
       _results = [];
       for (k in _ref) {
@@ -2679,7 +2631,6 @@ var __slice = [].slice,
     List.prototype.syncAbonentsAndUserlist = function(abonents, userlist) {
       var absByNumber, uNumber, user, _ref, _ref1, _results,
         _this = this;
-
       absByNumber = {};
       if ((abonents != null ? abonents.length : void 0) === 0 || (abonents.length === 1 && ((_ref = abonents[0]) != null ? _ref.isIvr : void 0) && !((_ref1 = abonents[0]) != null ? _ref1.phone : void 0))) {
         for (uNumber in userlist) {
@@ -2690,7 +2641,6 @@ var __slice = [].slice,
       }
       $.each(abonents, function(i, ab) {
         var number, u, _ref2;
-
         if (!ab) {
           return;
         }
@@ -2727,7 +2677,6 @@ var __slice = [].slice,
     List.prototype.setAbonents = function(abonents) {
       var abonent, number, _ref, _ref1,
         _this = this;
-
       this.log('setAbonents', abonents, this.abonents);
       _ref = this.abonents;
       for (number in _ref) {
@@ -2755,7 +2704,6 @@ var __slice = [].slice,
 
     List.prototype.setQueue = function(queue) {
       var ab, key, user, _i, _len, _ref;
-
       if (this.oktell.getState() === 'ring') {
         for (key = _i = 0, _len = queue.length; _i < _len; key = ++_i) {
           ab = queue[key];
@@ -2776,7 +2724,6 @@ var __slice = [].slice,
 
     List.prototype.setHold = function(holdInfo) {
       var abs;
-
       abs = [];
       if (holdInfo.hasHold) {
         if (holdInfo.conferenceid) {
@@ -2815,7 +2762,6 @@ var __slice = [].slice,
     List.prototype._setActivityPanelUserHtml = function(users, listEl, blockEl) {
       var k, u, usersArray,
         _this = this;
-
       usersArray = [];
       for (k in users) {
         if (!__hasProp.call(users, k)) continue;
@@ -2842,7 +2788,6 @@ var __slice = [].slice,
 
     List.prototype._setUsersHtml = function(usersArray, $el, useIndependentCopies) {
       var html, lastDepId, prevLetter, u, userEl, _i, _len;
-
       html = [];
       lastDepId = null;
       prevLetter = '';
@@ -2862,7 +2807,6 @@ var __slice = [].slice,
     List.prototype.setFilter = function(filter, reloadAnyway, notScrollTop) {
       var allDeps, dep, el, exactMatch, oldFilter, renderDep, _i, _len, _ref,
         _this = this;
-
       if (this.filter === filter && !reloadAnyway) {
         return false;
       }
@@ -2875,7 +2819,6 @@ var __slice = [].slice,
       allDeps = [];
       renderDep = function(dep) {
         var depExactMatch, el, users, _ref;
-
         el = dep.getEl(filter !== '');
         if ((el != null ? el[0] : void 0) != null) {
           el = el[0];
@@ -2939,7 +2882,6 @@ var __slice = [].slice,
 
     List.prototype.getUser = function(data, dontRemember) {
       var fantom, numberFormatted, strNumber, _ref;
-
       this.log("getUser dontRemember=" + dontRemember, data);
       if (typeof data === 'string' || typeof data === 'number') {
         strNumber = data.toString();
@@ -2982,10 +2924,8 @@ var __slice = [].slice,
 
     List.prototype.reloadActions = function() {
       var _this = this;
-
       return setTimeout(function() {
         var actions, phone, user, _ref, _ref1, _ref2, _ref3, _results;
-
         _ref = _this.userWithGeneratedButtons;
         for (phone in _ref) {
           if (!__hasProp.call(_ref, phone)) continue;
@@ -3029,7 +2969,6 @@ var __slice = [].slice,
 
     List.prototype.config = function(data) {
       var e, k, v, _ref;
-
       if (!this._config) {
         if ((typeof localStorage !== "undefined" && localStorage !== null ? localStorage.oktellPanel : void 0) && (typeof JSON !== "undefined" && JSON !== null ? JSON.parse : void 0)) {
           try {
@@ -3080,8 +3019,8 @@ var __slice = [].slice,
     function Popup(popupEl, oktell, ringtone) {
       var abonentsSet,
         _this = this;
-
       this.el = popupEl;
+      this._lastPopupShowTime = 0;
       this.ringtone = ringtone;
       this.absContainer = this.el.find('.b_content');
       this.abonentEl = this.absContainer.find('.b_abonent').remove();
@@ -3110,7 +3049,6 @@ var __slice = [].slice,
       });
       oktell.on('webrtcRingStart', function(name, identity) {
         var _ref;
-
         _this.log('webrtcRingStart, ' + identity);
         _this.playRingtone(true);
         _this.answerButtonVisible(true);
@@ -3129,7 +3067,6 @@ var __slice = [].slice,
         _this.setAbonents(abonents);
         setTimeout(function() {
           var _ref, _ref1;
-
           if ((abonents != null ? (_ref = abonents[0]) != null ? _ref.phone : void 0 : void 0) && ((_ref1 = oktell.getPhoneActions(abonents[0].phone)) != null ? typeof _ref1.indexOf === "function" ? _ref1.indexOf('answer') : void 0 : void 0) !== -1) {
             return _this.answerButtonVisible(true);
           }
@@ -3138,42 +3075,58 @@ var __slice = [].slice,
         return _this.show();
       });
       oktell.on('ringStop', function() {
-        _this.playRingtone(false);
-        _this.hide();
-        abonentsSet = false;
-        return _this.setAbonents([]);
+        return _this.hide();
+      });
+      oktell.on("stateChange", function(newState, oldState) {
+        if ((newState === "call" && oldState === "backring") || newState === "ready" || newState === "talk") {
+          return _this.hide();
+        }
       });
       this.answerButtonVisible(false);
     }
 
     Popup.prototype.playRingtone = function(play) {
-      if (this.ringtone) {
-        if (play) {
-          this.ringtone.currentTime = 0;
-          return this.ringtone.play();
-        } else {
-          return this.ringtone.pause();
+      var e;
+      try {
+        if (this.ringtone) {
+          if (play) {
+            this.ringtone.currentTime = 0;
+            return this.ringtone.play();
+          } else {
+            return this.ringtone.pause();
+          }
         }
+      } catch (_error) {
+        e = _error;
+        return this.log("playRingtone " + play + " throw error", e);
       }
     };
 
     Popup.prototype.show = function(abonents) {
+      if (Date.now() - this._lastPopupShowTime < 1000) {
+        return;
+      }
+      this._lastPopupShowTime = Date.now();
       this.log('Popup show! ', abonents);
       return this.el.fadeIn(200);
     };
 
     Popup.prototype.hide = function() {
+      var _this = this;
+      this.log("Popup hide!");
       this.playRingtone(false);
-      return this.el.fadeOut(200);
+      return this.el.fadeOut(200, function() {
+        var abonentsSet;
+        _this.setAbonents([]);
+        return abonentsSet = false;
+      });
     };
 
     Popup.prototype.setAbonents = function(abonents) {
       var _this = this;
-
       this.absContainer.empty();
       return $.each(abonents, function(i, abonent) {
         var el, foundInUsers, name, phone, phoneFormatted, u, user, _ref, _ref1, _ref2;
-
         if (!abonent) {
           _this.log('setAbonent: bad abonent');
           return;
@@ -3230,7 +3183,6 @@ var __slice = [].slice,
   PermissionsPopup = (function() {
     function PermissionsPopup(popupEl, oktellVoice) {
       var _this = this;
-
       this.el = popupEl;
       if (oktellVoice) {
         oktellVoice.on('mediaPermissionsRequest', function() {
@@ -3271,7 +3223,6 @@ var __slice = [].slice,
 
     function Error(errorEl, oktell) {
       var _this = this;
-
       this.el = errorEl;
       oktell.on('connecting', function() {
         return _this.hide();
@@ -3303,7 +3254,6 @@ var __slice = [].slice,
 
     Error.prototype.show = function(errorType, username) {
       var type, _ref, _ref1;
-
       if (!this.errorTypes[errorType]) {
         return false;
       }
@@ -3536,7 +3486,6 @@ var __slice = [].slice,
   useNativeScroll = isMobileDevice;
   checkCssAnimationSupport = function() {
     var div, divStyle, suffix, testProperties, v, _i, _len;
-
     div = document.createElement("div");
     divStyle = div.style;
     suffix = "Transform";
@@ -3553,7 +3502,6 @@ var __slice = [].slice,
   logStr = '';
   log = function() {
     var args, d, dd, e, fnName, i, t, val, _i, _len;
-
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     if (!getOptions().debug) {
       return;
@@ -3590,19 +3538,18 @@ var __slice = [].slice,
   };
   templates = {
     'templates/actionButton.html': '<ul class="oktell_button_action"><li class="g_first"><i></i></li><li class="g_last drop_down"><i></i></li></ul>',
-    'templates/actionList.html': '<ul class="oktell_actions_group_list"><li class="{{css}}" data-action="{{action}}"><i></i><span>{{actionText}}</span></li></ul>',
-    'templates/user.html': '<tr class="b_contact"><td class="b_capital_letter"><span></span></td><td class="b_contact_avatar {{css}}"><img src="{{avatarLink32x32}}"><i></i><div class="o_busy"></div></td><td class="b_contact_title"><div class="wrapword" title="{{name}}"><span class="b_contact_name"><b>{{name1}}</b><span>{{name2}}</span></span><span class="o_number">{{number}}</span><span class="o_dtmf">{{dtmf}}</span></div></td><td class="b_contact_status"><div class="o_dot_status"></div>{{button}}</td></tr>',
+    'templates/actionList.html': '<ul class="oktell_actions_group_list"><li class="{{css}}" data-action="{{action}}"><i></i> <span>{{actionText}}</span></li></ul>',
+    'templates/user.html': '<tr class="b_contact"><td class="b_capital_letter"><span></span></td><td class="b_contact_avatar {{css}}"><img src="{{avatarLink32x32}}"> <i></i><div class="o_busy"></div></td><td class="b_contact_title"><div class="wrapword" title="{{name}}"><span class="b_contact_name"><b>{{name1}}</b><span>{{name2}}</span></span><span class="o_number">{{number}}</span><span class="o_dtmf">{{dtmf}}</span></div></td><td class="b_contact_status"><div class="o_dot_status"></div>{{button}}</td></tr>',
     'templates/department.html': '<tr class="b_contact"><td class="b_contact_department" colspan="3">{{department}}</td></tr>',
     'templates/dep.html': '<div class="b_department"><div class="b_department_header"><div class="h_shadow_top"><span>{{department}}</span></div></div><table class="b_main_list"><tbody></tbody></table></div>',
     'templates/usersTable.html': '<table class="b_main_list m_without_department"><tbody></tbody></table>',
-    'templates/panel.html': '<div class="oktell_panel"><div class="i_panel_bookmark"><div class="i_panel_bookmark_bg"></div></div><div class="h_panel_bg"><div class="b_header"><ul class="b_list_filter"><li class="i_group"></li><li class="i_online"></li></ul></div><div class="h_padding"><div class="b_marks i_conference j_abonents"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{inTalk}}</span><span class="b_marks_time"></span></p><table><tbody></tbody></table></div></div></div><div class="b_marks i_extension" style="display: none"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{dtmfPanelName}}</span></p><div class="h_btn-group"><div class="btn-group"><button class="btn btn-small">1</button><button class="btn btn-small">2</button><button class="btn btn-small">3</button><button class="btn btn-small">4</button><button class="btn btn-small">5</button><button class="btn btn-small">6</button><button class="btn btn-small">7</button><button class="btn btn-small">8</button><button class="btn btn-small">9</button><button class="btn btn-small">0</button></div><div class="btn-group"><button class="btn btn-small">&lowast;</button><button class="btn btn-small">#</button></div></div></div></div><i class="o_close"></i></div><div class="b_marks i_flash j_hold"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{onHold}}</span></p><table class="j_table_favorite"><tbody></tbody></table></div></div></div><div class="b_marks i_flash j_queue"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{queue}}</span></p><table class="j_table_queue"><tbody></tbody></table></div></div></div><div class="b_inconversation j_phone_block"><table class="j_table_phone"><tbody></tbody></table></div><div class="b_marks i_phone"><div class="h_shadow_top"><div class="h_phone_number_input"><div class="i_phone_state_bg"></div><div class="h_input_padding"><div class="jInputClear_hover"><input class="b_phone_number_input" type="text" placeholder="{{inputPlaceholder}}"><span class="jInputClear_close">&times;</span></div></div></div></div></div><div class="b_sticky_header_container"></div><div class="h_main_list j_main_list"></div></div></div></div>',
-    'templates/callPopup.html': '<div class="oktell_panel_popup" style="display: none"><div class="m_popup_staff"><div class="m_popup_data"><header><div class="h_header_bg"><i class="o_close"></i><h2>{{title}}</h2></div></header><div class="b_content"><div class="b_abonent"><span data-bind="text: name"></span>&nbsp;<span class="g_light" data-bind="textPhone: number"></span></div></div><div class="footer"><div class="b_take_phone j_pickup"><i></i>&nbsp;<span>{{goPickup}}</span></div><button class="oktell_panel_btn m_big m_button_green j_answer" style="margin-right: 20px; float: left"><i></i>{{answer}}</button><button class="oktell_panel_btn m_big j_close_action">{{hide}}</button><button class="oktell_panel_btn m_big m_button_red j_abort_action"><i></i>{{reject}}</button></div></div></div></div>',
+    'templates/panel.html': '<div class="oktell_panel"><div class="i_panel_bookmark"><div class="i_panel_bookmark_bg"></div></div><div class="h_panel_bg"><div class="b_header"><ul class="b_list_filter"><li class="i_group"></li><li class="i_online"></li></ul></div><div class="h_padding"><div class="b_marks i_conference j_abonents"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{inTalk}}</span> <span class="b_marks_time"></span></p><table><tbody></tbody></table></div></div></div><div class="b_marks i_extension" style="display: none"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{dtmfPanelName}}</span></p><div class="h_btn-group"><div class="btn-group"><button class="btn btn-small">1</button> <button class="btn btn-small">2</button> <button class="btn btn-small">3</button> <button class="btn btn-small">4</button> <button class="btn btn-small">5</button> <button class="btn btn-small">6</button> <button class="btn btn-small">7</button> <button class="btn btn-small">8</button> <button class="btn btn-small">9</button> <button class="btn btn-small">0</button></div><div class="btn-group"><button class="btn btn-small">&lowast;</button> <button class="btn btn-small">#</button></div></div></div></div><i class="o_close"></i></div><div class="b_marks i_flash j_hold"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{onHold}}</span></p><table class="j_table_favorite"><tbody></tbody></table></div></div></div><div class="b_marks i_flash j_queue"><div class="h_shadow_top"><div class="b_marks_noise"><p class="b_marks_header"><span class="b_marks_label">{{queue}}</span></p><table class="j_table_queue"><tbody></tbody></table></div></div></div><div class="b_inconversation j_phone_block"><table class="j_table_phone"><tbody></tbody></table></div><div class="b_marks i_phone"><div class="h_shadow_top"><div class="h_phone_number_input"><div class="i_phone_state_bg"></div><div class="h_input_padding"><div class="jInputClear_hover"><input class="b_phone_number_input" type="text" placeholder="{{inputPlaceholder}}"><span class="jInputClear_close">&times;</span></div></div></div></div></div><div class="b_sticky_header_container"></div><div class="h_main_list j_main_list"></div></div></div></div>',
+    'templates/callPopup.html': '<div class="oktell_panel_popup" style="display: none"><div class="m_popup_staff"><div class="m_popup_data"><header><div class="h_header_bg"><i class="o_close"></i><h2>{{title}}</h2></div></header><div class="b_content"><div class="b_abonent"><span data-bind="text: name"></span>&nbsp; <span class="g_light" data-bind="textPhone: number"></span></div></div><div class="footer"><button class="oktell_panel_btn btn--success btn--large btn--take_phone j_pickup"><i></i>{{goPickup}}</button>  <button class="oktell_panel_btn btn--large btn--success btn--take_phone j_answer"><i></i>{{answer}}</button> <button class="oktell_panel_btn btn--large j_close_action">{{hide}}</button> <button class="oktell_panel_btn btn--large btn--danger j_abort_action"><i></i>{{reject}}</button></div></div></div></div>',
     'templates/permissionsPopup.html': '<div class="oktell_panel_popup" style="display: none"><div class="m_popup_staff"><div class="m_popup_data"><header><div class="h_header_bg"><h2>{{header}}</h2></div></header><div class="b_content"><p>{{text}}</p></div></div></div></div>',
     'templates/error.html': '<div class="b_error m_form" style="display: none"><div class="h_padding"><h4>{{title}}</h4><p class="b_error_alert"></p><p class="g_light"></p><p class="g_light"></p></div></div>'
   };
   loadTemplate = function(path) {
     var html;
-
     if (path[0] === '/') {
       path = path.substr(1);
     }
@@ -3642,7 +3589,6 @@ var __slice = [].slice,
   initPanel = function(opts) {
     var animOptHide, animOptShow, bookmarkAnimOptHide, bookmarkAnimOptShow, bookmarkPos, contOpt, cssAnimNow, enableMoving, errorEl, hidePanel, hideTimer, killPanelHideTimer, maxPosClose, minPosOpen, mouseOnPanel, pageX, panelBookmarkEl, panelHideTimer, panelMinPos, panelPos, panelStatus, permissionsPopupEl, popupEl, ringtone, showPanel, showTimer, touchMoving, useContainer, useCssAnim, _panelStatus, _ref,
       _this = this;
-
     panelWasInitialized = true;
     options = $.extend({}, defaultOptions, opts || {});
     useContainer = false;
@@ -3790,7 +3736,6 @@ var __slice = [].slice,
       };
       hidePanel = function() {
         var _this = this;
-
         if (useCssAnim) {
           if (!cssAnimNow) {
             panelStatus('closing');
@@ -3847,7 +3792,6 @@ var __slice = [].slice,
       });
       panelBookmarkEl.bind('touchmove', function(e) {
         var pos, t, _ref1, _ref2;
-
         if (panelStatus() === 'touchopening' || panelStatus() === 'touchclosing') {
           touchMoving = true;
         }
@@ -3865,7 +3809,6 @@ var __slice = [].slice,
       });
       panelBookmarkEl.bind('touchend', function() {
         var pos;
-
         if (!touchMoving) {
           if (panelStatus() === 'touchopening') {
             showPanel();
@@ -3897,7 +3840,6 @@ var __slice = [].slice,
       });
       $(window).bind('touchend', function(e) {
         var parents, parentsArr, target;
-
         target = $(e.target);
         parents = target.parents();
         parentsArr = parents.toArray();
@@ -3937,12 +3879,11 @@ var __slice = [].slice,
   };
   initButtonOnElement = function(el) {
     var button, phone;
-
     el.addClass(getOptions().buttonCss);
     phone = el.attr('data-phone');
     el.empty();
     if (phone) {
-      button = list.getUserButtonForPlugin(phone);
+      button = list.getUserButtonForPlugin(phone.replace(/\+/g, ""));
       return el.html(button);
     }
   };
@@ -3970,7 +3911,6 @@ var __slice = [].slice,
   };
   $.fn.oktellPanel = function() {
     var args;
-
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     if (!panelWasInitialized) {
       args.container = $(this);
