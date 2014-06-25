@@ -497,8 +497,8 @@
         if (userMedia) {
           return typeof onSuccess === "function" ? onSuccess(userMedia) : void 0;
         }
+        hasDecision = false;
         triggerDeny = function(st) {
-          var hasDecision;
           hasDecision = true;
           okVoice.trigger('mediaPermissionsRefuse');
           return typeof onDeny === "function" ? onDeny(st) : void 0;
@@ -508,7 +508,6 @@
           triggerDeny();
           return false;
         }
-        hasDecision = false;
         setTimeout(function() {
           if (!hasDecision) {
             return okVoice.trigger('mediaPermissionsRequest');
@@ -628,6 +627,7 @@
           return function() {
             var args, eventname;
             eventname = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+            return console.log('oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args);
           };
         })(this));
       }

@@ -309,6 +309,7 @@ window.oktellVoice = do ->
 	okVoice.createUserMedia = (onSuccess, onDeny, useVideo)=>
 		if userMedia
 			return onSuccess?(userMedia)
+		hasDecision = false
 
 		triggerDeny = (st)->
 			hasDecision = true
@@ -320,7 +321,6 @@ window.oktellVoice = do ->
 		if not okVoice.isSupported() or typeof getUserMedia isnt 'function'
 			triggerDeny()
 			return false
-		hasDecision = false
 		setTimeout =>
 			if not hasDecision
 				okVoice.trigger 'mediaPermissionsRequest'
@@ -399,7 +399,7 @@ window.oktellVoice = do ->
 			currentAcc.on 'all', (args...)=>
 				okVoice.trigger.apply okVoice, args
 			okVoice.on 'all', (eventname, args...)=>
-				#console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
+				console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
 		currentAcc
 
 	okVoice.disconnect = =>
