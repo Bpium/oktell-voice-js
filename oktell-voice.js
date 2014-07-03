@@ -627,7 +627,6 @@
           return function() {
             var args, eventname;
             eventname = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-            return console.log('oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args);
           };
         })(this));
       }

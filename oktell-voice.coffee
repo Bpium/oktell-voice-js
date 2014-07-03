@@ -399,7 +399,7 @@ window.oktellVoice = do ->
 			currentAcc.on 'all', (args...)=>
 				okVoice.trigger.apply okVoice, args
 			okVoice.on 'all', (eventname, args...)=>
-				console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
+				#console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
 		currentAcc
 
 	okVoice.disconnect = =>
