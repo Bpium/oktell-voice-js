@@ -76,73 +76,63 @@ window.oktellVoice = do ->
 					target[key] = val
 		target
 
+	
+	#####################
+	# oktellVoice object
+		
+	userMedia = false
+	
 	okVoice =
 		isOktellVoice: true
+		getUserMediaStream: ->
+			userMedia
+		isSupported: ->
+			# Supported Chrome, Yandex browser >=14, Opera >=20, Firefox
+			isChrome = Boolean navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/)
+			isYaBrowser = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? YaBrowser\/([0-9]+)/)?[1]) >= 14
+			isOpera = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+ OPR\/([0-9]+)/)?[1]) >= 20
+			isFirefox = Boolean navigator.userAgent.match(/Firefox\/[0-9\.]+/)
+			return isChrome or isYaBrowser or isOpera or isFirefox
+
+
 	extend okVoice, events
 
-	class Account
-		id: ''
-		connected: false
-		constructor: (sipObject, login, pass, server, useWSS)->
-			@sip = sipObject
-			@login = login
-			@pass = pass or ''
-			@server = server?.split(':')[0]
-			@port = server?.split(':')[1] or '5060'
-			@useWSS = useWSS
+	
+
+	
+	#####################
+	# Account Class
+
+	class JsSIPAccount
+		sip: window.JsSIP
+		constructor: (login, pass, server, useWSS)->
+			@id             = ''
+			@connected      = false		
+			@login          = login
+			@pass           = pass or ''
+			@server         = server?.split(':')[0]
+			@port           = server?.split(':')[1] or '5060'
+			@useWSS         = useWSS
+			@name           = 'JsSIP account'
+			@currentSession = false
+			@connectedFired = false
+			
 			if @sip and @login and @server and @port
 				@constructed = true
-			@name = 'Common account'
+			
 			@on 'all', (event, args...) =>
 				log 'EVENT ' + event + ' on ' + @getName(), args
-		getName: ->
-			@name + ' #' + @.id
-		connect: ->
-			if not @constructed
-				logErr 'error while consctruct ' + @getName()
-				false
-			else
-				log @getName() + ' connect', arguments
-				true
-		call: (number) ->
-			if not number
-				return false
-			log @getName() + ' call', arguments
-			true
-		answer: ->
-			log @getName() + ' answer', arguments
-		transfer: (to)->
-			if not to then return false
-			log @getName() + ' transfer', arguments
-			true
-		hangup: ->
-			log @getName() + ' hangup', arguments
-		dtmf: ->
-			log @getName() + ' dtmf', arguments
-		hold: ->
-			log @getName() + ' hold', arguments
-		isOnHold: ->
-			log @getName() + ' isOnHold', arguments
-		resume: ->
-			log @getName() + ' resume', arguments
-		reject: ->
-			log @getName() + ' reject', arguments
-		disconnect: ->
-			log @getName() + ' disconnect', arguments
-		isConnected: ->
-			@connected
-	extend Account.prototype, events
 
-	class JsSIPAccount extends Account
-		constructor: ->
-			super
-			@name = 'JsSIP account'
+		getName: ->
+			@name + ' #' + @.id	
+		isConnected: ->
+			@connected	
+
 		createFantomAbonent:  (newSession)->
 			caller = if typeof newSession == 'string' or typeof newSession == 'number' then newSession else newSession.getRemoteFriendlyName()
 			abonents = [{phone: caller.toString(), name: caller.toString()}]
 			return abonents
-		currentSession: false
-		connectedFired: false
+		
 		createAudioElements: ->
 			@elLocal = document.createElement 'audio'
 			@elRemote = document.createElement 'audio'
@@ -153,7 +143,10 @@ window.oktellVoice = do ->
 			document.body.appendChild @elLocal
 			document.body.appendChild @elRemote
 		connect: ->
-			if not super then return false
+			if not @constructed
+				logErr 'error while consctruct ' + @getName()
+				return false
+			log @getName() + ' connect', arguments
 			@createAudioElements() unless @elLocal
 			config =
 				ws_servers: (if @useWSS then 'wss' else 'ws') + '://' + @server + ':' + @port
@@ -163,7 +156,8 @@ window.oktellVoice = do ->
 				via_host: @server
 
 			@UA = new @sip.UA config
-			window.sipua = @UA
+			if debugMode
+				window.sipua = @UA
 
 
 
@@ -249,8 +243,9 @@ window.oktellVoice = do ->
 			@UA.start()
 
 		call: (number) ->
-			if not super then return false
-			if not @connected then return false
+			if not number or not @connected
+				return false
+			log @getName() + ' call', arguments
 			number = number.toString()
 			options =
 				#eventHandlers: eventHandlers
@@ -260,52 +255,42 @@ window.oktellVoice = do ->
 			@UA.call number, options
 
 		answer: ->
-			super
 			@currentSession?.answer?({'audio':true,'video':false})
 
 		hangup: ->
-			super
 			@currentSession?.terminate?()
 
 		reject: ->
-			super
 			@currentSession?.terminate?()
 		hold: ->
-			super
 			@currentSession?.hold?()
 
 		isOnHold: ->
-			super
 			@holdedSession?.isOnHold?()
 
 		resume: ->
-			super
 			@holdedSession?.unhold?()
-
+		
 		dtmf: (digit) ->
-			super
 			@currentSession?.sendDTMF?(digit)
 
 		transfer: (to) ->
-			if not super then return false
+			if not to 
+				return false
 			@currentSession?.transfer?(to.toString())
 
 		disconnect: ->
 			@UA.stop()
-#			setTimeout ->
-#				location.reload()
-#			, 500
+
+	extend Account.prototype, events
+
+	
 
 
-	userMedia = false
+	##################
+	# Media streams
 
-	okVoice.isSupported = ->
-		# Supported Chrome, Yandex browser >=14, Opera >=20, Firefox
-		isChrome = Boolean navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+$/)
-		isYaBrowser = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? YaBrowser\/([0-9]+)/)?[1]) >= 14
-		isOpera = parseInt(navigator.userAgent.match(/Chrome\/[0-9\.]+? Safari\/[0-9\.]+ OPR\/([0-9]+)/)?[1]) >= 20
-		isFirefox = Boolean navigator.userAgent.match(/Firefox\/[0-9\.]+/)
-		return isChrome or isYaBrowser or isOpera or isFirefox
+	
 
 	okVoice.createUserMedia = (onSuccess, onDeny, useVideo)=>
 		if userMedia
@@ -338,27 +323,32 @@ window.oktellVoice = do ->
 			triggerDeny(error)
 
 
-	okVoice.getUserMediaStream = ->
-		userMedia
+	
+
+	#######################
+	# Connecting and creating accounts
 
 	manager =
-		accounts: []
-		defaultAcc: null
+		accCount: 0
+		currentAcc: null
 		defaultOptions:
-			typeName: 'jssip'
 			debugMode: false
-
-		getSipObject: (typeName) ->
-			switch typeName
-				when 'jssip' then window.JsSIP
-		getClassByTypeName: (name)->
-			switch name
-				when 'jssip' then JsSIPAccount
-		exportKeys: ['call', 'answer', 'hangup', 'transfer', 'hold', 'isOnHold', 'resume', 'dtmf', 'reject', 'disconnect', 'isConnected']
+		exportFnNames: [
+			'call'
+			'answer'
+			'hangup'
+			'transfer'
+			'hold'
+			'isOnHold'
+			'resume'
+			'dtmf'
+			'reject'
+			'isConnected'
+		]
 		createExportAccount: (account) ->
 			if not account? then return false
 			a = {}
-			for key in @exportKeys when account[key]?
+			for key in @exportFnNames when account[key]?
 				do ->
 					val = account[key]
 					a[key] = ->
@@ -369,41 +359,41 @@ window.oktellVoice = do ->
 			return a
 		createAccount: (opts) ->
 			opts = extend {}, opts or {}, @defaultOptions
-			sipObject = opts.type or @getSipObject opts.typeName
-			accClass = @getClassByTypeName opts.typeName
-			if not sipObject or not accClass then return false
 			debugMode = Boolean opts.debugMode
 			# temp
 			#login  = location.href.match(/login=([^&]+)/)?[1]
 			#pass   = location.href.match(/pass=([^&]+)/)?[1]
 			#server = location.href.match(/server=([^&]+)/)?[1]
 			#acc = new accClass sipObject, login or opts.login, pass or opts.password, server or opts.server
-			acc = new accClass sipObject, opts.login, opts.password, opts.server, opts.useWSS
-			@defaultAcc ?= acc
-			acc.id = @accounts.length + 1
-			@accounts.push acc
+			acc = new JsSIPAccount opts.login, opts.password, opts.server, opts.useWSS
+			acc.id = ++@accCount
 			acc.connect()
 			return acc
+		disposeCurrentAcc: ->
+			@currentAcc?.disconnect?()
+			@currentAcc?.off?()
+			@currentAcc = null
 
-	for key in manager.exportKeys
+
+	for key in manager.exportFnNames
 		okVoice[key] = -> false
 
-	currentAcc = null
-	okVoice.connect = ->
-		# disconnect old acc and create new one
-		currentAcc?.disconnect?()
-
-		acc = manager.createAccount.apply manager, arguments
-		currentAcc = manager.createExportAccount acc
-		if acc is manager.defaultAcc
-			extend okVoice, currentAcc
-			currentAcc.on 'all', (args...)=>
-				okVoice.trigger.apply okVoice, args
-			okVoice.on 'all', (eventname, args...)=>
-				#console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
-		currentAcc
-
 	okVoice.disconnect = =>
+		manager.disposeCurrentAcc()
+		
+	okVoice.connect = (options)->
+		manager.disposeCurrentAcc()
+		manager.currentAcc = manager.createAccount options
+		exportAcc = manager.createExportAccount manager.currentAcc
+		extend okVoice, exportAcc
+		exportAcc.on 'all', (args...)=>
+			okVoice.trigger.apply okVoice, args
+		#okVoice.on 'all', (eventname, args...)=>
+		#	console.log 'oktellVoice!!!!!!!!!!!!!!!!!!!! EVENT ' + eventname, args
+		exportAcc.disconnect = ->
+			okVoice.disconnect()
+		exportAcc
+
 
 	okVoice.version = '0.2.3'
 
