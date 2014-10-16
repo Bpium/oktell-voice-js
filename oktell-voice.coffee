@@ -83,12 +83,13 @@ window.oktellVoice = do ->
 	class Account
 		id: ''
 		connected: false
-		constructor: (sipObject, login, pass, server)->
+		constructor: (sipObject, login, pass, server, useWSS)->
 			@sip = sipObject
 			@login = login
 			@pass = pass or ''
 			@server = server?.split(':')[0]
 			@port = server?.split(':')[1] or '5060'
+			@useWSS = useWSS
 			if @sip and @login and @server and @port
 				@constructed = true
 			@name = 'Common account'
@@ -155,7 +156,7 @@ window.oktellVoice = do ->
 			if not super then return false
 			@createAudioElements() unless @elLocal
 			config =
-				ws_servers: 'ws://' + @server + ':' + @port
+				ws_servers: (if @useWSS then 'wss' else 'ws') + '://' + @server + ':' + @port
 				uri: 'sip:' + @login + '@' + @server
 				password: @pass
 				trace_sip: debugMode
@@ -377,7 +378,7 @@ window.oktellVoice = do ->
 			#pass   = location.href.match(/pass=([^&]+)/)?[1]
 			#server = location.href.match(/server=([^&]+)/)?[1]
 			#acc = new accClass sipObject, login or opts.login, pass or opts.password, server or opts.server
-			acc = new accClass sipObject, opts.login, opts.password, opts.server
+			acc = new accClass sipObject, opts.login, opts.password, opts.server, opts.useWSS
 			@defaultAcc ?= acc
 			acc.id = @accounts.length + 1
 			@accounts.push acc

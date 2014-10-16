@@ -156,12 +156,13 @@
 
       Account.prototype.connected = false;
 
-      function Account(sipObject, login, pass, server) {
+      function Account(sipObject, login, pass, server, useWSS) {
         this.sip = sipObject;
         this.login = login;
         this.pass = pass || '';
         this.server = server != null ? server.split(':')[0] : void 0;
         this.port = (server != null ? server.split(':')[1] : void 0) || '5060';
+        this.useWSS = useWSS;
         if (this.sip && this.login && this.server && this.port) {
           this.constructed = true;
         }
@@ -289,7 +290,7 @@
           this.createAudioElements();
         }
         config = {
-          ws_servers: 'ws://' + this.server + ':' + this.port,
+          ws_servers: (this.useWSS ? 'wss' : 'ws') + '://' + this.server + ':' + this.port,
           uri: 'sip:' + this.login + '@' + this.server,
           password: this.pass,
           trace_sip: debugMode,
@@ -590,7 +591,7 @@
           return false;
         }
         debugMode = Boolean(opts.debugMode);
-        acc = new accClass(sipObject, opts.login, opts.password, opts.server);
+        acc = new accClass(sipObject, opts.login, opts.password, opts.server, opts.useWSS);
         if (this.defaultAcc == null) {
           this.defaultAcc = acc;
         }
