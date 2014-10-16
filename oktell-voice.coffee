@@ -199,7 +199,7 @@ window.oktellVoice = do ->
 			@UA.on 'mediaPermissionsRefuse', (e)=>
 				log 'media permissions refuse', e
 				@trigger 'mediaPermissionsRefuse'
-
+			
 			@UA.on 'newRTCSession', (e)=>
 				log 'new RTC session', e
 				@currentSession = e.data.session
@@ -239,6 +239,9 @@ window.oktellVoice = do ->
 					log 'currentSession ended'
 					@trigger 'RTCSessionEnded', @currentSession.remote_identity?.display_name
 
+				@currentSession.on 'hold', (e)=>
+					@holdedSession = @currentSession
+
 
 				# incoming or outgoing session
 
@@ -268,18 +271,15 @@ window.oktellVoice = do ->
 			@currentSession?.terminate?()
 		hold: ->
 			super
-			#@holdedSession = @currentSession
 			@currentSession?.hold?()
 
 		isOnHold: ->
 			super
-			#@holdedSession = @currentSession
-			@currentSession?.isOnHold?()
+			@holdedSession?.isOnHold?()
 
 		resume: ->
 			super
-			@currentSession?.unhold?()
-		#@holdedSession?.resume?()
+			@holdedSession?.unhold?()
 
 		dtmf: (digit) ->
 			super

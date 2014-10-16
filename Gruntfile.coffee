@@ -34,7 +34,7 @@ module.exports = (grunt)->
 				files: [
 					{
 						src: [
-							'jssip-0.4.0-devel.js',
+							'jssip-devel.js',
 							'<%= myConf.build %>/oktell-voice.js'
 						]
 						dest: '<%= myConf.build %>/oktell-voice.js'
@@ -63,6 +63,13 @@ module.exports = (grunt)->
 					from: /"version": "[0-9\.]+",/,
 					to: '"version": "<%= myConf.version %>",'
 				}]
+
+		connect:
+			server:
+				options:
+					port: 9777,
+					base: '',
+					keepalive: true
 
 
 
