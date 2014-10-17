@@ -1,6 +1,6 @@
 /*
  * Oktell-voice.js
- * version 0.2.2
+ * version 0.2.3
  * http://js.oktell.ru/js/voice/
  */
 
@@ -22193,6 +22193,6 @@ window.oktellVoice = (function() {
     return currentAcc;
   };
   okVoice.disconnect = function() {};
-  okVoice.version = '0.2.2';
+  okVoice.version = '0.2.3';
   return okVoice;
 })();

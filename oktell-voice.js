@@ -639,7 +639,7 @@
     okVoice.disconnect = (function(_this) {
       return function() {};
     })(this);
-    okVoice.version = '0.2.2';
+    okVoice.version = '0.2.3';
     return okVoice;
   })();
 
