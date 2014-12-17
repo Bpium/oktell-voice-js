@@ -3,49 +3,16 @@ var __slice = [].slice,
   __hasProp = {}.hasOwnProperty;
 
 window.oktellVoice = (function() {
-  var JsSIPAccount, debugMode, eventSplitter, events, extend, key, log, logErr, logStr, manager, okVoice, userMedia, _i, _len, _ref;
+  var JsSIPAccount, debugMode, eventSplitter, events, extend, key, log, manager, okVoice, userMedia, _i, _len, _ref;
   debugMode = false;
-  logStr = '';
   log = function() {
-    var args, d, dd, e, fnName, i, t, val, _i, _len;
+    var args;
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     if (!debugMode) {
       return;
     }
-    d = new Date();
-    dd = d.getFullYear() + '-' + (d.getMonth() < 10 ? '0' : '') + d.getMonth() + '-' + (d.getDate() < 10 ? '0' : '') + d.getDate();
-    t = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes() + ':' + (d.getSeconds() < 10 ? '0' : '') + d.getSeconds() + ':' + (d.getMilliseconds() + 1000).toString().substr(1);
-    logStr += dd + ' ' + t + ' | ';
-    fnName = 'log';
-    if (args[0].toString().toLowerCase() === 'error') {
-      fnName = 'error';
-    }
-    for (i = _i = 0, _len = args.length; _i < _len; i = ++_i) {
-      val = args[i];
-      if (typeof val === 'object') {
-        try {
-          logStr += JSON.stringify(val);
-        } catch (_error) {
-          e = _error;
-          logStr += val.toString();
-        }
-      } else {
-        logStr += val;
-      }
-      logStr += ' | ';
-    }
-    logStr += "\n\n";
-    args.unshift('Oktell-Voice.js ' + t + ' |');
-    try {
-      return console[fnName].apply(console, args || []);
-    } catch (_error) {
-      e = _error;
-    }
-  };
-  logErr = function() {
-    var args;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return log.apply(this, ['error'].concat(args));
+    args.unshift('Oktell-Voice.js |');
+    return console.log.apply(console, args);
   };
   eventSplitter = /\s+/;
   events = {
@@ -221,7 +188,7 @@ window.oktellVoice = (function() {
     JsSIPAccount.prototype.connect = function() {
       var config;
       if (!this.constructed) {
-        logErr('error while consctruct ' + this.getName());
+        log.error('error while construct ' + this.getName());
         return false;
       }
       log(this.getName() + ' connect', arguments);
@@ -232,9 +199,13 @@ window.oktellVoice = (function() {
         ws_servers: (this.useWSS ? 'wss' : 'ws') + '://' + this.server + ':' + this.port,
         uri: 'sip:' + this.login + '@' + this.server,
         password: this.pass,
-        trace_sip: debugMode,
         via_host: this.server
       };
+      if (debugMode) {
+        JsSIP.debug.enable('JsSIP:*');
+      } else {
+        JsSIP.debug.disable('JsSIP:*');
+      }
       this.UA = new this.sip.UA(config);
       if (debugMode) {
         window.sipua = this.UA;
@@ -326,7 +297,7 @@ window.oktellVoice = (function() {
           if (_this.currentSession.direction === 'incoming') {
             onSessionStart();
           } else {
-            _this.currentSession.on('started', onSessionStart);
+            _this.currentSession.on('confirmed', onSessionStart);
           }
           _this.currentSession.on('progress', function(e) {
             return log('currentSession progress', e);
@@ -418,7 +389,7 @@ window.oktellVoice = (function() {
     return JsSIPAccount;
 
   })();
-  extend(Account.prototype, events);
+  extend(JsSIPAccount.prototype, events);
   okVoice.createUserMedia = (function(_this) {
     return function(onSuccess, onDeny, useVideo) {
       var getUserMedia, hasDecision, triggerDeny;

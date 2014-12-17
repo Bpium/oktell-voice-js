@@ -1,33 +1,11 @@
 window.oktellVoice = do ->
 
 	debugMode = false
-	logStr = ''
 	log = (args...)->
 		if not debugMode then return
-		d = new Date()
-		dd =  d.getFullYear() + '-' + (if d.getMonth()<10 then '0' else '') + d.getMonth() + '-' + (if d.getDate()<10 then '0' else '') + d.getDate();
-		t = (if d.getHours()<10 then '0' else '') + d.getHours() + ':' + (if d.getMinutes()<10 then '0' else '')+d.getMinutes() + ':' +  (if d.getSeconds()<10 then '0' else '')+d.getSeconds() + ':' +	(d.getMilliseconds() + 1000).toString().substr(1)
-		logStr += dd + ' ' + t + ' | '
-		fnName = 'log'
-		if args[0].toString().toLowerCase() is 'error'
-			fnName = 'error'
-		for val, i in args
-			if typeof val == 'object'
-				try
-					logStr += JSON.stringify(val)
-				catch e
-					logStr += val.toString()
-			else
-				logStr += val
-			logStr += ' | '
-		logStr += "\n\n"
-		args.unshift 'Oktell-Voice.js ' + t + ' |'
-		try
-			console[fnName].apply( console, args || [])
-		catch e
-	logErr = (args...)->
-		log.apply this, ['error'].concat(args)
-
+		args.unshift 'Oktell-Voice.js |'
+		console.log.apply console, args
+	
 	eventSplitter = /\s+/
 	events =
 		on: (eventNames, callback, context) ->
@@ -144,7 +122,7 @@ window.oktellVoice = do ->
 			document.body.appendChild @elRemote
 		connect: ->
 			if not @constructed
-				logErr 'error while consctruct ' + @getName()
+				log.error 'error while construct ' + @getName()
 				return false
 			log @getName() + ' connect', arguments
 			@createAudioElements() unless @elLocal
@@ -152,8 +130,12 @@ window.oktellVoice = do ->
 				ws_servers: (if @useWSS then 'wss' else 'ws') + '://' + @server + ':' + @port
 				uri: 'sip:' + @login + '@' + @server
 				password: @pass
-				trace_sip: debugMode
 				via_host: @server
+
+			if debugMode 
+				JsSIP.debug.enable('JsSIP:*')
+			else 
+				JsSIP.debug.disable('JsSIP:*')
 
 			@UA = new @sip.UA config
 			if debugMode
@@ -221,7 +203,7 @@ window.oktellVoice = do ->
 				if @currentSession.direction is 'incoming'
 					onSessionStart()
 				else
-					@currentSession.on 'started', onSessionStart
+					@currentSession.on 'confirmed', onSessionStart
 
 				@currentSession.on 'progress', (e)=>
 					log 'currentSession progress', e
@@ -282,7 +264,7 @@ window.oktellVoice = do ->
 		disconnect: ->
 			@UA.stop()
 
-	extend Account.prototype, events
+	extend JsSIPAccount.prototype, events
 
 	
 
