@@ -22244,15 +22244,10 @@ window.oktellVoice = (function() {
       return acc;
     },
     disposeCurrentAcc: function() {
-      var _ref, _ref1;
+      var _ref;
       if ((_ref = this.currentAcc) != null) {
         if (typeof _ref.disconnect === "function") {
           _ref.disconnect();
-        }
-      }
-      if ((_ref1 = this.currentAcc) != null) {
-        if (typeof _ref1.off === "function") {
-          _ref1.off();
         }
       }
       return this.currentAcc = null;

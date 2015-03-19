@@ -353,7 +353,7 @@ window.oktellVoice = do ->
 			return acc
 		disposeCurrentAcc: ->
 			@currentAcc?.disconnect?()
-			@currentAcc?.off?()
+			# @currentAcc?.off?()
 			@currentAcc = null
 
 
