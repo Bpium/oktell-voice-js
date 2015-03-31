@@ -241,6 +241,7 @@
           return function(e) {
             log('unregistered', e);
             _this.connected = false;
+            _this.UA.stop();
             return _this.trigger('disconnect');
           };
         })(this));
@@ -248,6 +249,7 @@
           return function(e) {
             log('registration failed', e);
             _this.connected = false;
+            _this.UA.stop();
             return _this.trigger('disconnect');
           };
         })(this));

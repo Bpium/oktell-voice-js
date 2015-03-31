@@ -162,10 +162,12 @@ window.oktellVoice = do ->
 			@UA.on 'unregistered', (e)=>
 				log 'unregistered', e
 				@connected = false
+				@UA.stop()
 				@trigger 'disconnect'
 			@UA.on 'registrationFailed', (e)=>
 				log 'registration failed', e
 				@connected = false
+				@UA.stop()
 				@trigger 'disconnect'
 			@UA.on 'mediaPermissionsRequest', (e)=>
 				log 'media permissions request', e

@@ -22027,11 +22027,13 @@ window.oktellVoice = (function() {
       this.UA.on('unregistered', function(e) {
         log('unregistered', e);
         _this.connected = false;
+        _this.UA.stop();
         return _this.trigger('disconnect');
       });
       this.UA.on('registrationFailed', function(e) {
         log('registration failed', e);
         _this.connected = false;
+        _this.UA.stop();
         return _this.trigger('disconnect');
       });
       this.UA.on('mediaPermissionsRequest', function(e) {
