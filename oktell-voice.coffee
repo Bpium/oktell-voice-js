@@ -276,7 +276,7 @@ window.oktellVoice = do ->
 
 	
 
-	okVoice.createUserMedia = (onSuccess, onDeny, useVideo)=>
+	okVoice.createUserMedia = (onSuccess, onDeny, useVideo, audioOptions = {})=>
 		if userMedia
 			return onSuccess?(userMedia)
 		hasDecision = false
@@ -288,6 +288,11 @@ window.oktellVoice = do ->
 
 		getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia or navigator.mozGetUserMedia or navigator.msGetUserMedia
 
+		defaultAudioOptions =
+			mandatory:
+				googAutoGainControl: false
+			optional: []
+
 		if not okVoice.isSupported() or typeof getUserMedia isnt 'function'
 			triggerDeny()
 			return false
@@ -296,7 +301,7 @@ window.oktellVoice = do ->
 				okVoice.trigger 'mediaPermissionsRequest'
 		, 500
 		getUserMedia.call navigator,
-			audio: true
+			audio: extend({}, defaultAudioOptions, audioOptions)
 			video: useVideo
 		, (st)=>
 			hasDecision = true
@@ -379,6 +384,6 @@ window.oktellVoice = do ->
 		exportAcc
 
 
-	okVoice.version = '0.2.3'
+	okVoice.version = '0.2.4'
 
 	return okVoice

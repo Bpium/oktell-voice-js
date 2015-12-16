@@ -1,6 +1,6 @@
 /*
  * Oktell-voice.js
- * version 0.2.3
+ * version 0.2.4
  * http://js.oktell.ru/js/voice/
  */
 
@@ -22168,8 +22168,11 @@ window.oktellVoice = (function() {
 
   })();
   extend(JsSIPAccount.prototype, events);
-  okVoice.createUserMedia = function(onSuccess, onDeny, useVideo) {
-    var getUserMedia, hasDecision, triggerDeny;
+  okVoice.createUserMedia = function(onSuccess, onDeny, useVideo, audioOptions) {
+    var defaultAudioOptions, getUserMedia, hasDecision, triggerDeny;
+    if (audioOptions == null) {
+      audioOptions = {};
+    }
     if (userMedia) {
       return typeof onSuccess === "function" ? onSuccess(userMedia) : void 0;
     }
@@ -22180,6 +22183,12 @@ window.oktellVoice = (function() {
       return typeof onDeny === "function" ? onDeny(st) : void 0;
     };
     getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+    defaultAudioOptions = {
+      mandatory: {
+        googAutoGainControl: false
+      },
+      optional: []
+    };
     if (!okVoice.isSupported() || typeof getUserMedia !== 'function') {
       triggerDeny();
       return false;
@@ -22190,7 +22199,7 @@ window.oktellVoice = (function() {
       }
     }, 500);
     return getUserMedia.call(navigator, {
-      audio: true,
+      audio: extend({}, defaultAudioOptions, audioOptions),
       video: useVideo
     }, function(st) {
       hasDecision = true;
@@ -22282,6 +22291,6 @@ window.oktellVoice = (function() {
     };
     return exportAcc;
   };
-  okVoice.version = '0.2.3';
+  okVoice.version = '0.2.4';
   return okVoice;
 })();
