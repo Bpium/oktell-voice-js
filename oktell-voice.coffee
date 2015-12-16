@@ -283,7 +283,7 @@ window.oktellVoice = do ->
 
 		triggerDeny = (st)->
 			hasDecision = true
-			okVoice.trigger 'mediaPermissionsRefuse'
+			okVoice.trigger 'mediaPermissionsRefuse', st
 			onDeny?(st)
 
 		getUserMedia = navigator.getUserMedia or navigator.webkitGetUserMedia or navigator.mozGetUserMedia or navigator.msGetUserMedia
@@ -384,6 +384,6 @@ window.oktellVoice = do ->
 		exportAcc
 
 
-	okVoice.version = '0.2.4'
+	okVoice.version = '0.2.5'
 
 	return okVoice

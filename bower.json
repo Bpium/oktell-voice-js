@@ -1,6 +1,6 @@
 {
   "name": "oktell-voice",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "authors": [
     "airato <airato.a@gmail.com>"
   ],
@@ -22,13 +22,10 @@
     "old"
   ],
   "dependencies": {
-    "oktelljs": "https://github.com/telsystems/oktelljs.git#master"
   },
   "devDependencies": {
     "jquery": "~1",
-    "webpanel": "https://github.com/telsystems/webpanel.git#master"
-  },
-  "resolutions": {
-    "oktelljs": "master"
+    "webpanel": "https://github.com/telsystems/webpanel.git#master",
+    "oktelljs": "https://github.com/telsystems/oktelljs.git#master"
   }
 }

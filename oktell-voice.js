@@ -405,7 +405,7 @@
         hasDecision = false;
         triggerDeny = function(st) {
           hasDecision = true;
-          okVoice.trigger('mediaPermissionsRefuse');
+          okVoice.trigger('mediaPermissionsRefuse', st);
           return typeof onDeny === "function" ? onDeny(st) : void 0;
         };
         getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -522,7 +522,7 @@
       };
       return exportAcc;
     };
-    okVoice.version = '0.2.4';
+    okVoice.version = '0.2.5';
     return okVoice;
   })();
 
