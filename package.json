@@ -1,9 +1,15 @@
 {
   "name": "oktell-voice",
   "version": "0.2.2",
+  "scripts": {
+    "build": "coffee -c *.coffee && grunt",
+    "watch": "coffee -wc *.coffee"
+  },
   "dependencies": {},
   "devDependencies": {
+    "coffeescript": "^1.10.0",
     "grunt": "~0.4.1",
+    "grunt-cli": "^1.3.2",
     "grunt-contrib-clean": "~0.2.0",
     "grunt-contrib-coffee": "~0.7.0",
     "grunt-contrib-concat": "~0.3.0",
