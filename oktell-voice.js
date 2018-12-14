@@ -277,21 +277,29 @@
             log('new RTC session', e);
             _this.currentSession = e.data.session;
             onSessionStart = function(e) {
-              var ref, ref1, ref2, ref3, ref4, ref5;
+              var ref, ref1, ref2, ref3, ref4, ref5, setStream;
               log('currentSession started', e);
               _this.trigger('RTCSessionStarted', (ref = _this.currentSession.remote_identity) != null ? ref.display_name : void 0);
               if (((ref1 = _this.currentSession) != null ? ref1.direction : void 0) === 'incoming') {
                 _this.trigger('ringStart', (ref2 = _this.currentSession) != null ? (ref3 = ref2.remote_identity) != null ? ref3.display_name : void 0 : void 0, (ref4 = _this.currentSession) != null ? (ref5 = ref4.remote_identity) != null ? typeof ref5.toString === "function" ? ref5.toString() : void 0 : void 0 : void 0);
               }
+              setStream = function(audioElement, stream) {
+                var error1;
+                try {
+                  return audioElement.srcObject = stream;
+                } catch (error1) {
+                  return audioElement.src = window.URL.createObjectURL(stream);
+                }
+              };
               if (_this.currentSession.getLocalStreams().length > 0) {
                 log('currentSession local stream > 0', _this.currentSession.getRemoteStreams()[0].getAudioTracks());
-                _this.elLocal.src = window.URL.createObjectURL(_this.currentSession.getLocalStreams()[0]);
+                setStream(_this.elLocal, _this.currentSession.getLocalStreams()[0]);
               } else {
                 log('currentSession local stream == 0');
               }
               if (_this.currentSession.getRemoteStreams().length > 0) {
                 log('currentSession remote stream > 0', _this.currentSession.getRemoteStreams()[0].getAudioTracks());
-                _this.elRemote.src = window.URL.createObjectURL(_this.currentSession.getRemoteStreams()[0]);
+                setStream(_this.elRemote, _this.currentSession.getRemoteStreams()[0]);
                 return _this.elRemote.play();
               } else {
                 return log('currentSession remote stream == 0');
@@ -522,7 +530,7 @@
       };
       return exportAcc;
     };
-    okVoice.version = '0.2.5';
+    okVoice.version = '0.2.6';
     return okVoice;
   })();
 

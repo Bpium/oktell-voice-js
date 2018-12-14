@@ -189,15 +189,22 @@ window.oktellVoice = do ->
 					if @currentSession?.direction is 'incoming'
 						@trigger 'ringStart', @currentSession?.remote_identity?.display_name, @currentSession?.remote_identity?.toString?()
 
+					# https://stackoverflow.com/questions/51101408/deprecation-of-createobjecturl-and-replace-with-the-new-htmlmediaelement-srcobje
+					setStream = (audioElement, stream)=> 
+						try
+							audioElement.srcObject = stream
+						catch
+							audioElement.src = window.URL.createObjectURL(stream)
+
 					if @currentSession.getLocalStreams().length > 0
 						log 'currentSession local stream > 0', @currentSession.getRemoteStreams()[0].getAudioTracks()
-						@elLocal.src = window.URL.createObjectURL @currentSession.getLocalStreams()[0]
+						setStream @elLocal, @currentSession.getLocalStreams()[0]
 					else
 						log 'currentSession local stream == 0'
 
 					if @currentSession.getRemoteStreams().length > 0
 						log 'currentSession remote stream > 0', @currentSession.getRemoteStreams()[0].getAudioTracks()
-						@elRemote.src = window.URL.createObjectURL @currentSession.getRemoteStreams()[0]
+						setStream @elRemote, @currentSession.getRemoteStreams()[0]
 						@elRemote.play()
 					else
 						log 'currentSession remote stream == 0'
@@ -384,6 +391,6 @@ window.oktellVoice = do ->
 		exportAcc
 
 
-	okVoice.version = '0.2.5'
+	okVoice.version = '0.2.6'
 
 	return okVoice

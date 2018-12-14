@@ -1,6 +1,6 @@
 /*
  * Oktell-voice.js
- * version 0.2.5
+ * version 0.2.6
  * http://js.oktell.ru/js/voice/
  */
 
@@ -22053,21 +22053,28 @@ window.oktellVoice = (function() {
         log('new RTC session', e);
         _this.currentSession = e.data.session;
         onSessionStart = function(e) {
-          var _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+          var setStream, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
           log('currentSession started', e);
           _this.trigger('RTCSessionStarted', (_ref = _this.currentSession.remote_identity) != null ? _ref.display_name : void 0);
           if (((_ref1 = _this.currentSession) != null ? _ref1.direction : void 0) === 'incoming') {
             _this.trigger('ringStart', (_ref2 = _this.currentSession) != null ? (_ref3 = _ref2.remote_identity) != null ? _ref3.display_name : void 0 : void 0, (_ref4 = _this.currentSession) != null ? (_ref5 = _ref4.remote_identity) != null ? typeof _ref5.toString === "function" ? _ref5.toString() : void 0 : void 0 : void 0);
           }
+          setStream = function(audioElement, stream) {
+            try {
+              return audioElement.srcObject = stream;
+            } catch (_error) {
+              return audioElement.src = window.URL.createObjectURL(stream);
+            }
+          };
           if (_this.currentSession.getLocalStreams().length > 0) {
             log('currentSession local stream > 0', _this.currentSession.getRemoteStreams()[0].getAudioTracks());
-            _this.elLocal.src = window.URL.createObjectURL(_this.currentSession.getLocalStreams()[0]);
+            setStream(_this.elLocal, _this.currentSession.getLocalStreams()[0]);
           } else {
             log('currentSession local stream == 0');
           }
           if (_this.currentSession.getRemoteStreams().length > 0) {
             log('currentSession remote stream > 0', _this.currentSession.getRemoteStreams()[0].getAudioTracks());
-            _this.elRemote.src = window.URL.createObjectURL(_this.currentSession.getRemoteStreams()[0]);
+            setStream(_this.elRemote, _this.currentSession.getRemoteStreams()[0]);
             return _this.elRemote.play();
           } else {
             return log('currentSession remote stream == 0');
@@ -22291,6 +22298,6 @@ window.oktellVoice = (function() {
     };
     return exportAcc;
   };
-  okVoice.version = '0.2.5';
+  okVoice.version = '0.2.6';
   return okVoice;
 })();
