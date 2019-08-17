@@ -5,7 +5,7 @@ window.oktellVoice = do ->
 		if not debugMode then return
 		args.unshift 'Oktell-Voice.js |'
 		console.log.apply console, args
-	
+
 	eventSplitter = /\s+/
 	events =
 		on: (eventNames, callback, context) ->
@@ -54,12 +54,12 @@ window.oktellVoice = do ->
 					target[key] = val
 		target
 
-	
+
 	#####################
 	# oktellVoice object
-		
+
 	userMedia = false
-	
+
 	okVoice =
 		isOktellVoice: true
 		getUserMediaStream: ->
@@ -75,9 +75,9 @@ window.oktellVoice = do ->
 
 	extend okVoice, events
 
-	
 
-	
+
+
 	#####################
 	# Account Class
 
@@ -85,7 +85,7 @@ window.oktellVoice = do ->
 		sip: window.JsSIP
 		constructor: (login, pass, server, useWSS)->
 			@id             = ''
-			@connected      = false		
+			@connected      = false
 			@login          = login
 			@pass           = pass or ''
 			@server         = server?.split(':')[0]
@@ -94,23 +94,23 @@ window.oktellVoice = do ->
 			@name           = 'JsSIP account'
 			@currentSession = false
 			@connectedFired = false
-			
+
 			if @sip and @login and @server and @port
 				@constructed = true
-			
+
 			@on 'all', (event, args...) =>
 				log 'EVENT ' + event + ' on ' + @getName(), args
 
 		getName: ->
-			@name + ' #' + @.id	
+			@name + ' #' + @.id
 		isConnected: ->
-			@connected	
+			@connected
 
 		createFantomAbonent:  (newSession)->
 			caller = if typeof newSession == 'string' or typeof newSession == 'number' then newSession else newSession.getRemoteFriendlyName()
 			abonents = [{phone: caller.toString(), name: caller.toString()}]
 			return abonents
-		
+
 		createAudioElements: ->
 			@elLocal = document.createElement 'audio'
 			@elRemote = document.createElement 'audio'
@@ -132,9 +132,9 @@ window.oktellVoice = do ->
 				password: @pass
 				via_host: @server
 
-			if debugMode 
+			if debugMode
 				JsSIP.debug.enable('JsSIP:*')
-			else 
+			else
 				JsSIP.debug.disable('JsSIP:*')
 
 			@UA = new @sip.UA config
@@ -178,7 +178,7 @@ window.oktellVoice = do ->
 			@UA.on 'mediaPermissionsRefuse', (e)=>
 				log 'media permissions refuse', e
 				@trigger 'mediaPermissionsRefuse'
-			
+
 			@UA.on 'newRTCSession', (e)=>
 				log 'new RTC session', e
 				@currentSession = e.data.session
@@ -190,7 +190,7 @@ window.oktellVoice = do ->
 						@trigger 'ringStart', @currentSession?.remote_identity?.display_name, @currentSession?.remote_identity?.toString?()
 
 					# https://stackoverflow.com/questions/51101408/deprecation-of-createobjecturl-and-replace-with-the-new-htmlmediaelement-srcobje
-					setStream = (audioElement, stream)=> 
+					setStream = (audioElement, stream)=>
 						try
 							audioElement.srcObject = stream
 						catch
@@ -261,12 +261,12 @@ window.oktellVoice = do ->
 
 		resume: ->
 			@holdedSession?.unhold?()
-		
+
 		dtmf: (digit) ->
 			@currentSession?.sendDTMF?(digit)
 
 		transfer: (to) ->
-			if not to 
+			if not to
 				return false
 			@currentSession?.transfer?(to.toString())
 
@@ -275,13 +275,13 @@ window.oktellVoice = do ->
 
 	extend JsSIPAccount.prototype, events
 
-	
+
 
 
 	##################
 	# Media streams
 
-	
+
 
 	okVoice.createUserMedia = (onSuccess, onDeny, useVideo, audioOptions = {})=>
 		if userMedia
@@ -319,7 +319,7 @@ window.oktellVoice = do ->
 			triggerDeny(error)
 
 
-	
+
 
 	#######################
 	# Connecting and creating accounts
@@ -376,7 +376,7 @@ window.oktellVoice = do ->
 
 	okVoice.disconnect = =>
 		manager.disposeCurrentAcc()
-		
+
 	okVoice.connect = (options)->
 		manager.disposeCurrentAcc()
 		manager.currentAcc = manager.createAccount options

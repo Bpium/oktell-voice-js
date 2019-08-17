@@ -35,7 +35,7 @@ var JsSIP = (function() {
 
 (function(JsSIP) {
 
-var Logger = 
+var Logger =
 (function() {
 
 var Logger = function(logger, category, label) {
@@ -379,7 +379,7 @@ EventEmitter.prototype = {
   emit: function(event, sender, data) {
     var listeners, length, e, idx,
       self = this;
-    
+
     if (!this.checkEvent(event)) {
       this.logger.error('unable to emit a nonexistent event'+ event);
       return;
@@ -389,7 +389,7 @@ EventEmitter.prototype = {
 
     listeners = this.events[event];
     length = listeners.length;
-    
+
     e = new JsSIP.Event(event, sender, data);
 
     listeners.map(function(listener) {
@@ -622,7 +622,7 @@ Exceptions= {
     exception.prototype = new Error();
     return exception;
   }()),
-  
+
   NotReadyError: (function(){
     var exception = function(message) {
       this.code = 4;
@@ -735,7 +735,7 @@ Transport.prototype = {
     if(this.ws) {
       // Clear reconnectTimer
       window.clearTimeout(this.reconnectTimer);
-      
+
       this.closed = true;
       this.logger.log('closing WebSocket ' + this.server.ws_uri);
       this.ws.close();
@@ -773,7 +773,7 @@ Transport.prototype = {
 
     try {
       this.ws = new WebSocket(this.server.ws_uri, 'sip');
-      
+
       this.ws.binaryType = 'arraybuffer';
 
       this.ws.onopen = function() {
@@ -1324,7 +1324,7 @@ OutgoingRequest.prototype = {
   setHeader: function(name, value) {
     this.headers[JsSIP.Utils.headerize(name)] = (value instanceof Array) ? value : [value];
   },
-  
+
   /**
    * Get the value of the given header name at the given position.
    * @param {String} name header name
@@ -1348,7 +1348,7 @@ OutgoingRequest.prototype = {
         }
       }
     }
-    
+
     return;
   },
 
@@ -1389,7 +1389,7 @@ OutgoingRequest.prototype = {
   hasHeader: function(name) {
     var regexp, idx,
       length = this.extraHeaders.length;
-    
+
     if (this.headers[JsSIP.Utils.headerize(name)]) {
       return true;
     } else {
@@ -1400,12 +1400,12 @@ OutgoingRequest.prototype = {
         }
       }
     }
-    
+
     return false;
   },
-  
+
   toString: function() {
-    var msg = '', header, length, idx, 
+    var msg = '', header, length, idx,
       supported = [];
 
     msg += this.method + ' ' + this.ruri + ' SIP/2.0\r\n';
@@ -1433,12 +1433,12 @@ OutgoingRequest.prototype = {
         }
         break;
     }
-    
+
     supported.push('outbound');
-    
+
     // Allow
     msg += 'Allow: '+ JsSIP.Utils.getAllowedMethods(this.ua) +'\r\n';
-    
+
     msg += 'Supported: ' +  supported +'\r\n';
     msg += 'User-Agent: ' + JsSIP.C.USER_AGENT +'\r\n';
 
@@ -1685,7 +1685,7 @@ IncomingRequest.prototype.reply = function(code, reason, extraHeaders, body, onS
   for (idx = 0; idx < length; idx++) {
     response += extraHeaders[idx].trim() +'\r\n';
   }
-  
+
   // Supported
   switch (this.method) {
     case JsSIP.C.INVITE:
@@ -1694,9 +1694,9 @@ IncomingRequest.prototype.reply = function(code, reason, extraHeaders, body, onS
       }
       break;
   }
-  
+
   supported.push('outbound');
-  
+
   // Allow and Accept
   if (this.method === JsSIP.C.OPTIONS) {
     response += 'Allow: '+ JsSIP.Utils.getAllowedMethods(this.ua) +'\r\n';
@@ -1706,7 +1706,7 @@ IncomingRequest.prototype.reply = function(code, reason, extraHeaders, body, onS
   } else if (code === 415 ) {
     response += 'Accept: '+ JsSIP.UA.C.ACCEPTED_BODY_TYPES +'\r\n';
   }
-  
+
   response += 'Supported: ' +  supported +'\r\n';
 
   if(body) {
@@ -2520,7 +2520,7 @@ NonInviteServerTransaction.prototype.timer_J = function() {
 NonInviteServerTransaction.prototype.onTransportError = function() {
   if (!this.transportError) {
     this.transportError = true;
-    
+
     this.logger.log('transport error occurred, deleting non-INVITE server transaction ' + this.id);
 
     window.clearTimeout(this.J);
@@ -2605,7 +2605,7 @@ var InviteServerTransaction = function(request, ua) {
   ua.newTransaction(this);
 
   this.resendProvisionalTimer = null;
-  
+
   request.reply(100);
 
   this.initEvents(events);
@@ -2623,7 +2623,7 @@ InviteServerTransaction.prototype.timer_H = function() {
   if(this.state === C.STATUS_COMPLETED) {
     this.logger.warn('transactions', 'ACK for INVITE server transaction was never received, call will be terminated');
   }
-  
+
   this.stateChanged(C.STATUS_TERMINATED);
   this.ua.destroyTransaction(this);
 };
@@ -2653,11 +2653,11 @@ InviteServerTransaction.prototype.onTransportError = function() {
       window.clearInterval(this.resendProvisionalTimer);
       this.resendProvisionalTimer = null;
     }
-    
+
     window.clearTimeout(this.L);
     window.clearTimeout(this.H);
     window.clearTimeout(this.I);
-    
+
     this.stateChanged(C.STATUS_TERMINATED);
     this.ua.destroyTransaction(this);
   }
@@ -2698,7 +2698,7 @@ InviteServerTransaction.prototype.receiveResponse = function(status_code, respon
         this.L = window.setTimeout(function() {
           tr.timer_L();
         }, JsSIP.Timers.TIMER_L);
-        
+
         if (this.resendProvisionalTimer !== null) {
           window.clearInterval(this.resendProvisionalTimer);
           this.resendProvisionalTimer = null;
@@ -2723,7 +2723,7 @@ InviteServerTransaction.prototype.receiveResponse = function(status_code, respon
           window.clearInterval(this.resendProvisionalTimer);
           this.resendProvisionalTimer = null;
         }
-        
+
         if(!this.transport.send(response)) {
           this.onTransportError();
           if (onFailure) {
@@ -2866,7 +2866,7 @@ JsSIP.Transactions = {
 (function(JsSIP) {
 
 // Load dependencies
-var RequestSender   = 
+var RequestSender   =
 /**
  * @fileoverview In-Dialog Request Sender
  */
@@ -2898,12 +2898,12 @@ RequestSender = function(dialog, applicant, request) {
 
 RequestSender.prototype = {
   send: function() {
-    var 
+    var
       self = this,
       request_sender = new JsSIP.RequestSender(this, this.dialog.owner.ua);
-    
+
     request_sender.send();
-    
+
     // RFC3261 14.2 Modifying an Existing Session -UAC BEHAVIOR-
     if (this.request.method === JsSIP.C.INVITE && request_sender.clientTransaction.state !== JsSIP.Transactions.C.STATUS_TERMINATED) {
       this.dialog.uac_pending_reply = true;
@@ -2911,10 +2911,10 @@ RequestSender.prototype = {
         if (e.sender.state === JsSIP.Transactions.C.STATUS_ACCEPTED ||
             e.sender.state === JsSIP.Transactions.C.STATUS_COMPLETED ||
             e.sender.state === JsSIP.Transactions.C.STATUS_TERMINATED) {
-            
+
           request_sender.clientTransaction.removeListener('stateChanged', stateChanged);
           self.dialog.uac_pending_reply = false;
-          
+
           if (self.dialog.uas_pending_reply === false) {
             self.dialog.owner.onReadyToReinvite();
           }
@@ -2972,7 +2972,7 @@ var Dialog,
 // RFC 3261 12.1
 Dialog = function(owner, message, type, state) {
   var contact;
-  
+
   this.uac_pending_reply = false;
   this.uas_pending_reply = false;
 
@@ -3094,7 +3094,7 @@ Dialog.prototype = {
   // RFC 3261 12.2.2
   checkInDialogRequest: function(request) {
     var self = this;
-    
+
     if(!this.remote_seqnum) {
       this.remote_seqnum = request.cseq;
     } else if(request.cseq < this.remote_seqnum) {
@@ -3122,17 +3122,17 @@ Dialog.prototype = {
             if (e.sender.state === JsSIP.Transactions.C.STATUS_ACCEPTED ||
                 e.sender.state === JsSIP.Transactions.C.STATUS_COMPLETED ||
                 e.sender.state === JsSIP.Transactions.C.STATUS_TERMINATED) {
-                
+
               request.server_transaction.removeListener('stateChanged', stateChanged);
               self.uas_pending_reply = false;
-              
+
               if (self.uac_pending_reply === false) {
                 self.owner.onReadyToReinvite();
               }
             }
           });
         }
-        
+
         // RFC3261 12.2.2 Replace the dialog`s remote target URI if the request is accepted
         if(request.hasHeader('contact')) {
           request.server_transaction.on('stateChanged', function(e){
@@ -3369,7 +3369,7 @@ Registrator = function(ua, transport) {
 
   // sip.ice media feature tag (RFC 5768)
   this.contact += ';+sip.ice';
-  
+
   this.extraHeaders = [];
 
   if(reg_id) {
@@ -3387,11 +3387,11 @@ Registrator.prototype = {
       self = this;
 
     options = options || {};
-    
+
     if (options.extraHeaders && Object.keys(options.extraHeaders).length !== 0) {
       this.extraHeaders = options.extraHeaders && options.extraHeaders.slice();
     }
-    
+
     extraHeaders = this.extraHeaders.slice();
     extraHeaders.push('Contact: '+ this.contact + ';expires=' + this.expires);
 
@@ -3522,11 +3522,11 @@ Registrator.prototype = {
     }
 
     options = options || {};
-    
+
     if (options.extraHeaders && Object.keys(options.extraHeaders).length !== 0) {
       this.extraHeaders = options.extraHeaders && options.extraHeaders.slice();
     }
-    
+
     extraHeaders = this.extraHeaders.slice();
 
     this.registered = false;
@@ -3715,9 +3715,9 @@ Request.prototype.send = function(method, options) {
     this.owner.status !== JsSIP.RTCSession.C.STATUS_TERMINATED) {
     throw new JsSIP.Exceptions.InvalidStateError(this.owner.status);
   }
-  
-  /* 
-   * Allow sending BYE in TERMINATED status since the RTCSession 
+
+  /*
+   * Allow sending BYE in TERMINATED status since the RTCSession
    * could had been terminated before the ACK had arrived.
    * RFC3261 Section 15, Paragraph 2
    */
@@ -3832,7 +3832,7 @@ RTCMediaHandler.prototype = {
   isReady: function() {
     return this.ready;
   },
-  
+
   createOffer: function(onSuccess, onFailure, constraints) {
     var self = this;
 
@@ -3848,7 +3848,7 @@ RTCMediaHandler.prototype = {
         };
       }
     }
-    
+
     this.ready = false;
 
     this.peerConnection.createOffer(
@@ -3887,7 +3887,7 @@ RTCMediaHandler.prototype = {
         };
       }
     }
-    
+
     this.ready = false;
 
     this.peerConnection.createAnswer(
@@ -3944,7 +3944,7 @@ RTCMediaHandler.prototype = {
   */
   init: function(options) {
     options = options || {};
-    
+
     var idx, length, server,
       self = this,
       servers = [],
@@ -3960,15 +3960,15 @@ RTCMediaHandler.prototype = {
     if (!turn_servers) {
       turn_servers = config.turn_servers;
     }
-    
+
     /* Change 'url' to 'urls' whenever this issue is solved:
      * https://code.google.com/p/webrtc/issues/detail?id=2096
      */
-    
+
     if (stun_servers.length > 0) {
       servers.push({'url': stun_servers});
     }
-    
+
     length = turn_servers.length;
     for (idx = 0; idx < length; idx++) {
       server = turn_servers[idx];
@@ -4001,7 +4001,7 @@ RTCMediaHandler.prototype = {
 
     this.peerConnection.oniceconnectionstatechange = function() {
       self.logger.log('ICE connection state changed to "'+ this.iceConnectionState +'"');
-      
+
       if (this.iceConnectionState === 'disconnected') {
         self.session.terminate({
             cause: JsSIP.C.causes.RTP_TIMEOUT,
@@ -7228,9 +7228,9 @@ UA.prototype.loadConfig = function(configuration) {
        * or it's a number with NaN value, then apply its default value.
        */
       if (JsSIP.Utils.isEmpty(value)) {
-        continue; 
+        continue;
       }
-      
+
       checked_value = UA.configuration_check.optional[parameter](value);
       if (checked_value !== undefined) {
         settings[parameter] = checked_value;
@@ -7288,7 +7288,7 @@ UA.prototype.loadConfig = function(configuration) {
   if (settings.hack_ip_in_contact) {
     settings.via_host = JsSIP.Utils.getRandomTestNetIP();
   }
-  
+
   // Set empty Stun Server Set if explicitly passed an empty Array
   value = configuration.stun_servers;
   if (value instanceof Array && value.length === 0) {
@@ -7722,7 +7722,7 @@ Utils= {
   isDecimal: function (num) {
     return !isNaN(num) && (parseFloat(num) === parseInt(num,10));
   },
-  
+
   isEmpty: function(value) {
     if (value === null || value === "" || value === undefined || (value instanceof Array && value.length === 0) || (typeof(value) === 'number' && window.isNaN(value))) {
       return true;
@@ -8579,7 +8579,7 @@ if (typeof module === "object" && module && typeof module.exports === "object") 
 } else {
   // Otherwise expose JsSIP to the global object as usual.
   window.JsSIP = JsSIP;
-  
+
   // Register as a named AMD module, since JsSIP can be concatenated with other
   // files that may use define, but not via a proper concatenation script that
   // understands anonymous AMD modules. A named AMD is safest and most robust
@@ -8599,7 +8599,7 @@ JsSIP.Grammar = (function(){
    *
    * http://pegjs.majda.cz/
    */
-  
+
   function quote(s) {
     /*
      * ECMA-262, 5th ed., 7.8.4: All characters may appear literally in a
@@ -8622,7 +8622,7 @@ JsSIP.Grammar = (function(){
       .replace(/[\x00-\x07\x0B\x0E-\x1F\x80-\uFFFF]/g, escape)
       + '"';
   }
-  
+
   var result = {
     /*
      * Parses the input with a generated parser. If the parsing is successfull,
@@ -8851,7 +8851,7 @@ JsSIP.Grammar = (function(){
         "hex8": parse_hex8,
         "hex12": parse_hex12
       };
-      
+
       if (startRule !== undefined) {
         if (parseFunctions[startRule] === undefined) {
           throw new Error("Invalid rule name: " + quote(startRule) + ".");
@@ -8859,28 +8859,28 @@ JsSIP.Grammar = (function(){
       } else {
         startRule = "CRLF";
       }
-      
+
       var pos = 0;
       var reportFailures = 0;
       var rightmostFailuresPos = 0;
       var rightmostFailuresExpected = [];
-      
+
       function padLeft(input, padding, length) {
         var result = input;
-        
+
         var padLength = length - input.length;
         for (var i = 0; i < padLength; i++) {
           result = padding + result;
         }
-        
+
         return result;
       }
-      
+
       function escape(ch) {
         var charCode = ch.charCodeAt(0);
         var escapeChar;
         var length;
-        
+
         if (charCode <= 0xFF) {
           escapeChar = 'x';
           length = 2;
@@ -8888,26 +8888,26 @@ JsSIP.Grammar = (function(){
           escapeChar = 'u';
           length = 4;
         }
-        
+
         return '\\' + escapeChar + padLeft(charCode.toString(16).toUpperCase(), '0', length);
       }
-      
+
       function matchFailed(failure) {
         if (pos < rightmostFailuresPos) {
           return;
         }
-        
+
         if (pos > rightmostFailuresPos) {
           rightmostFailuresPos = pos;
           rightmostFailuresExpected = [];
         }
-        
+
         rightmostFailuresExpected.push(failure);
       }
-      
+
       function parse_CRLF() {
         var result0;
-        
+
         if (input.substr(pos, 2) === "\r\n") {
           result0 = "\r\n";
           pos += 2;
@@ -8919,10 +8919,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_DIGIT() {
         var result0;
-        
+
         if (/^[0-9]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -8934,10 +8934,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_ALPHA() {
         var result0;
-        
+
         if (/^[a-zA-Z]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -8949,10 +8949,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_HEXDIG() {
         var result0;
-        
+
         if (/^[0-9a-fA-F]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -8964,20 +8964,20 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_WSP() {
         var result0;
-        
+
         result0 = parse_SP();
         if (result0 === null) {
           result0 = parse_HTAB();
         }
         return result0;
       }
-      
+
       function parse_OCTET() {
         var result0;
-        
+
         if (/^[\0-\xFF]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -8989,10 +8989,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_DQUOTE() {
         var result0;
-        
+
         if (/^["]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -9004,10 +9004,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SP() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 32) {
           result0 = " ";
           pos++;
@@ -9019,10 +9019,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_HTAB() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 9) {
           result0 = "\t";
           pos++;
@@ -9034,10 +9034,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_alphanum() {
         var result0;
-        
+
         if (/^[a-zA-Z0-9]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -9049,10 +9049,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_reserved() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 59) {
           result0 = ";";
           pos++;
@@ -9163,20 +9163,20 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_unreserved() {
         var result0;
-        
+
         result0 = parse_alphanum();
         if (result0 === null) {
           result0 = parse_mark();
         }
         return result0;
       }
-      
+
       function parse_mark() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 45) {
           result0 = "-";
           pos++;
@@ -9276,11 +9276,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_escaped() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.charCodeAt(pos) === 37) {
@@ -9318,11 +9318,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_LWS() {
         var result0, result1, result2;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         pos2 = pos;
@@ -9374,19 +9374,19 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SWS() {
         var result0;
-        
+
         result0 = parse_LWS();
         result0 = result0 !== null ? result0 : "";
         return result0;
       }
-      
+
       function parse_HCOLON() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = [];
@@ -9435,11 +9435,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_TEXT_UTF8_TRIM() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result1 = parse_TEXT_UTF8char();
@@ -9514,10 +9514,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_TEXT_UTF8char() {
         var result0;
-        
+
         if (/^[!-~]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -9532,10 +9532,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_UTF8_NONASCII() {
         var result0;
-        
+
         if (/^[\x80-\uFFFF]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -9547,10 +9547,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_UTF8_CONT() {
         var result0;
-        
+
         if (/^[\x80-\xBF]/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -9562,10 +9562,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_LHEX() {
         var result0;
-        
+
         result0 = parse_DIGIT();
         if (result0 === null) {
           if (/^[a-f]/.test(input.charAt(pos))) {
@@ -9580,11 +9580,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_token() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_alphanum();
         if (result1 === null) {
@@ -9825,11 +9825,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_token_nodot() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_alphanum();
         if (result1 === null) {
@@ -10048,10 +10048,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_separators() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 40) {
           result0 = "(";
           pos++;
@@ -10237,11 +10237,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_word() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_alphanum();
         if (result1 === null) {
@@ -10752,11 +10752,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_STAR() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -10794,11 +10794,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SLASH() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -10836,11 +10836,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_EQUAL() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -10878,11 +10878,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_LPAREN() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -10920,11 +10920,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_RPAREN() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -10962,11 +10962,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_RAQUOT() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.charCodeAt(pos) === 62) {
@@ -10998,11 +10998,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_LAQUOT() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -11034,11 +11034,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_COMMA() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -11076,11 +11076,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SEMI() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -11118,11 +11118,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_COLON() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -11160,11 +11160,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_LDQUOT() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -11188,11 +11188,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_RDQUOT() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_DQUOTE();
@@ -11216,11 +11216,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_comment() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_LPAREN();
         if (result0 !== null) {
@@ -11260,10 +11260,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_ctext() {
         var result0;
-        
+
         if (/^[!-']/.test(input.charAt(pos))) {
           result0 = input.charAt(pos);
           pos++;
@@ -11303,11 +11303,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_quoted_string() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -11355,11 +11355,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_quoted_string_clean() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SWS();
@@ -11407,10 +11407,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_qdtext() {
         var result0;
-        
+
         result0 = parse_LWS();
         if (result0 === null) {
           if (input.charCodeAt(pos) === 33) {
@@ -11450,11 +11450,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_quoted_pair() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         if (input.charCodeAt(pos) === 92) {
           result0 = "\\";
@@ -11509,11 +11509,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SIP_URI_noparams() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_uri_scheme();
@@ -11568,11 +11568,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SIP_URI() {
         var result0, result1, result2, result3, result4, result5;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_uri_scheme();
@@ -11633,7 +11633,7 @@ JsSIP.Grammar = (function(){
                                 delete data.host_type;
                                 delete data.port;
                                 delete data.uri_params;
-        
+
                                 if (startRule === 'SIP_URI') { data = data.uri;}
                               } catch(e) {
                                 data = -1;
@@ -11644,11 +11644,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_uri_scheme() {
         var result0;
         var pos0;
-        
+
         if (input.substr(pos, 3).toLowerCase() === "sip") {
           result0 = input.substr(pos, 3);
           pos += 3;
@@ -11679,11 +11679,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_userinfo() {
         var result0, result1, result2;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_user();
@@ -11744,10 +11744,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_user() {
         var result0, result1;
-        
+
         result1 = parse_unreserved();
         if (result1 === null) {
           result1 = parse_escaped();
@@ -11772,10 +11772,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_user_unreserved() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 38) {
           result0 = "&";
           pos++;
@@ -11864,11 +11864,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_password() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result0 = [];
         result1 = parse_unreserved();
@@ -12001,11 +12001,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hostport() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_host();
         if (result0 !== null) {
@@ -12044,11 +12044,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_host() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_IPv4address();
         if (result0 === null) {
@@ -12067,11 +12067,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hostname() {
         var result0, result1, result2;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = [];
@@ -12159,10 +12159,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_domainlabel() {
         var result0, result1;
-        
+
         if (/^[a-zA-Z0-9_\-]/.test(input.charAt(pos))) {
           result1 = input.charAt(pos);
           pos++;
@@ -12191,10 +12191,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_toplabel() {
         var result0, result1;
-        
+
         if (/^[a-zA-Z0-9_\-]/.test(input.charAt(pos))) {
           result1 = input.charAt(pos);
           pos++;
@@ -12223,11 +12223,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_IPv6reference() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.charCodeAt(pos) === 91) {
@@ -12275,11 +12275,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_IPv6address() {
         var result0, result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_h16();
@@ -13879,11 +13879,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_h16() {
         var result0, result1, result2, result3;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_HEXDIG();
         if (result0 !== null) {
@@ -13915,11 +13915,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_ls32() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_h16();
         if (result0 !== null) {
@@ -13953,11 +13953,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_IPv4address() {
         var result0, result1, result2, result3, result4, result5, result6;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_dec_octet();
@@ -14037,11 +14037,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_dec_octet() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 2) === "25") {
           result0 = "25";
@@ -14169,11 +14169,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_port() {
         var result0, result1, result2, result3, result4;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_DIGIT();
@@ -14223,11 +14223,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_uri_parameters() {
         var result0, result1, result2;
         var pos0;
-        
+
         result0 = [];
         pos0 = pos;
         if (input.charCodeAt(pos) === 59) {
@@ -14278,10 +14278,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_uri_parameter() {
         var result0;
-        
+
         result0 = parse_transport_param();
         if (result0 === null) {
           result0 = parse_user_param();
@@ -14303,11 +14303,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_transport_param() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 10).toLowerCase() === "transport=") {
@@ -14385,11 +14385,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_user_param() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 5).toLowerCase() === "user=") {
@@ -14445,11 +14445,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_method_param() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 7).toLowerCase() === "method=") {
@@ -14483,11 +14483,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_ttl_param() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 4).toLowerCase() === "ttl=") {
@@ -14521,11 +14521,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_maddr_param() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 6).toLowerCase() === "maddr=") {
@@ -14559,11 +14559,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_lr_param() {
         var result0, result1, result2;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 2).toLowerCase() === "lr") {
@@ -14619,11 +14619,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_other_param() {
         var result0, result1, result2;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_pname();
@@ -14677,11 +14677,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_pname() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_paramchar();
         if (result1 !== null) {
@@ -14701,11 +14701,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_pvalue() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_paramchar();
         if (result1 !== null) {
@@ -14725,10 +14725,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_paramchar() {
         var result0;
-        
+
         result0 = parse_param_unreserved();
         if (result0 === null) {
           result0 = parse_unreserved();
@@ -14738,10 +14738,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_param_unreserved() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 91) {
           result0 = "[";
           pos++;
@@ -14819,11 +14819,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_headers() {
         var result0, result1, result2, result3, result4;
         var pos0, pos1;
-        
+
         pos0 = pos;
         if (input.charCodeAt(pos) === 63) {
           result0 = "?";
@@ -14901,11 +14901,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_header() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_hname();
@@ -14951,10 +14951,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hname() {
         var result0, result1;
-        
+
         result1 = parse_hnv_unreserved();
         if (result1 === null) {
           result1 = parse_unreserved();
@@ -14979,10 +14979,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hvalue() {
         var result0, result1;
-        
+
         result0 = [];
         result1 = parse_hnv_unreserved();
         if (result1 === null) {
@@ -15003,10 +15003,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hnv_unreserved() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 91) {
           result0 = "[";
           pos++;
@@ -15084,21 +15084,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Request_Response() {
         var result0;
-        
+
         result0 = parse_Status_Line();
         if (result0 === null) {
           result0 = parse_Request_Line();
         }
         return result0;
       }
-      
+
       function parse_Request_Line() {
         var result0, result1, result2, result3, result4;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_Method();
         if (result0 !== null) {
@@ -15133,21 +15133,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Request_URI() {
         var result0;
-        
+
         result0 = parse_SIP_URI();
         if (result0 === null) {
           result0 = parse_absoluteURI();
         }
         return result0;
       }
-      
+
       function parse_absoluteURI() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_scheme();
         if (result0 !== null) {
@@ -15181,11 +15181,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hier_part() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_net_path();
         if (result0 === null) {
@@ -15227,11 +15227,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_net_path() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 2) === "//") {
           result0 = "//";
@@ -15263,11 +15263,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_abs_path() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         if (input.charCodeAt(pos) === 47) {
           result0 = "/";
@@ -15292,11 +15292,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_opaque_part() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_uric_no_slash();
         if (result0 !== null) {
@@ -15318,10 +15318,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_uric() {
         var result0;
-        
+
         result0 = parse_reserved();
         if (result0 === null) {
           result0 = parse_unreserved();
@@ -15331,10 +15331,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_uric_no_slash() {
         var result0;
-        
+
         result0 = parse_unreserved();
         if (result0 === null) {
           result0 = parse_escaped();
@@ -15440,11 +15440,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_path_segments() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_segment();
         if (result0 !== null) {
@@ -15508,11 +15508,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_segment() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = [];
         result1 = parse_pchar();
@@ -15581,10 +15581,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_param() {
         var result0, result1;
-        
+
         result0 = [];
         result1 = parse_pchar();
         while (result1 !== null) {
@@ -15593,10 +15593,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_pchar() {
         var result0;
-        
+
         result0 = parse_unreserved();
         if (result0 === null) {
           result0 = parse_escaped();
@@ -15680,11 +15680,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_scheme() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_ALPHA();
@@ -15786,21 +15786,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_authority() {
         var result0;
-        
+
         result0 = parse_srvr();
         if (result0 === null) {
           result0 = parse_reg_name();
         }
         return result0;
       }
-      
+
       function parse_srvr() {
         var result0, result1;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_userinfo();
@@ -15840,10 +15840,10 @@ JsSIP.Grammar = (function(){
         result0 = result0 !== null ? result0 : "";
         return result0;
       }
-      
+
       function parse_reg_name() {
         var result0, result1;
-        
+
         result1 = parse_unreserved();
         if (result1 === null) {
           result1 = parse_escaped();
@@ -16038,10 +16038,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_query() {
         var result0, result1;
-        
+
         result0 = [];
         result1 = parse_uric();
         while (result1 !== null) {
@@ -16050,11 +16050,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SIP_Version() {
         var result0, result1, result2, result3, result4, result5;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 3).toLowerCase() === "sip") {
@@ -16139,10 +16139,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_INVITEm() {
         var result0;
-        
+
         if (input.substr(pos, 6) === "INVITE") {
           result0 = "INVITE";
           pos += 6;
@@ -16154,10 +16154,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_ACKm() {
         var result0;
-        
+
         if (input.substr(pos, 3) === "ACK") {
           result0 = "ACK";
           pos += 3;
@@ -16169,10 +16169,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_OPTIONSm() {
         var result0;
-        
+
         if (input.substr(pos, 7) === "OPTIONS") {
           result0 = "OPTIONS";
           pos += 7;
@@ -16184,10 +16184,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_BYEm() {
         var result0;
-        
+
         if (input.substr(pos, 3) === "BYE") {
           result0 = "BYE";
           pos += 3;
@@ -16199,10 +16199,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_CANCELm() {
         var result0;
-        
+
         if (input.substr(pos, 6) === "CANCEL") {
           result0 = "CANCEL";
           pos += 6;
@@ -16214,10 +16214,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_REGISTERm() {
         var result0;
-        
+
         if (input.substr(pos, 8) === "REGISTER") {
           result0 = "REGISTER";
           pos += 8;
@@ -16229,10 +16229,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_SUBSCRIBEm() {
         var result0;
-        
+
         if (input.substr(pos, 9) === "SUBSCRIBE") {
           result0 = "SUBSCRIBE";
           pos += 9;
@@ -16244,10 +16244,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_NOTIFYm() {
         var result0;
-        
+
         if (input.substr(pos, 6) === "NOTIFY") {
           result0 = "NOTIFY";
           pos += 6;
@@ -16259,11 +16259,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Method() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_INVITEm();
         if (result0 === null) {
@@ -16300,11 +16300,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Status_Line() {
         var result0, result1, result2, result3, result4;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_SIP_Version();
         if (result0 !== null) {
@@ -16339,11 +16339,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Status_Code() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_extension_code();
         if (result0 !== null) {
@@ -16355,11 +16355,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_extension_code() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_DIGIT();
         if (result0 !== null) {
@@ -16382,11 +16382,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Reason_Phrase() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result0 = [];
         result1 = parse_reserved();
@@ -16439,11 +16439,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Allow_Events() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_event_type();
         if (result0 !== null) {
@@ -16491,11 +16491,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Call_ID() {
         var result0, result1, result2;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_word();
@@ -16542,11 +16542,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Contact() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         result0 = parse_STAR();
         if (result0 === null) {
@@ -16617,11 +16617,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_contact_param() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SIP_URI_noparams();
@@ -16693,11 +16693,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_name_addr() {
         var result0, result1, result2, result3;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_display_name();
         result0 = result0 !== null ? result0 : "";
@@ -16727,11 +16727,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_display_name() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_token();
@@ -16794,10 +16794,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_contact_params() {
         var result0;
-        
+
         result0 = parse_c_p_q();
         if (result0 === null) {
           result0 = parse_c_p_expires();
@@ -16807,11 +16807,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_c_p_q() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 1).toLowerCase() === "q") {
@@ -16851,11 +16851,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_c_p_expires() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 7).toLowerCase() === "expires") {
@@ -16895,11 +16895,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_delta_seconds() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_DIGIT();
         if (result1 !== null) {
@@ -16920,11 +16920,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_qvalue() {
         var result0, result1, result2, result3, result4;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.charCodeAt(pos) === 48) {
@@ -16994,11 +16994,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_generic_param() {
         var result0, result1, result2;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_token();
@@ -17044,10 +17044,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_gen_value() {
         var result0;
-        
+
         result0 = parse_token();
         if (result0 === null) {
           result0 = parse_host();
@@ -17057,11 +17057,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Content_Disposition() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_disp_type();
         if (result0 !== null) {
@@ -17109,10 +17109,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_disp_type() {
         var result0;
-        
+
         if (input.substr(pos, 6).toLowerCase() === "render") {
           result0 = input.substr(pos, 6);
           pos += 6;
@@ -17160,21 +17160,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_disp_param() {
         var result0;
-        
+
         result0 = parse_handling_param();
         if (result0 === null) {
           result0 = parse_generic_param();
         }
         return result0;
       }
-      
+
       function parse_handling_param() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 8).toLowerCase() === "handling") {
           result0 = input.substr(pos, 8);
@@ -17227,11 +17227,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Content_Encoding() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -17279,11 +17279,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Content_Length() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_DIGIT();
         if (result1 !== null) {
@@ -17304,11 +17304,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Content_Type() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_media_type();
         if (result0 !== null) {
@@ -17320,11 +17320,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_media_type() {
         var result0, result1, result2, result3, result4, result5;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_m_type();
         if (result0 !== null) {
@@ -17384,20 +17384,20 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_m_type() {
         var result0;
-        
+
         result0 = parse_discrete_type();
         if (result0 === null) {
           result0 = parse_composite_type();
         }
         return result0;
       }
-      
+
       function parse_discrete_type() {
         var result0;
-        
+
         if (input.substr(pos, 4).toLowerCase() === "text") {
           result0 = input.substr(pos, 4);
           pos += 4;
@@ -17456,10 +17456,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_composite_type() {
         var result0;
-        
+
         if (input.substr(pos, 7).toLowerCase() === "message") {
           result0 = input.substr(pos, 7);
           pos += 7;
@@ -17485,21 +17485,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_extension_token() {
         var result0;
-        
+
         result0 = parse_token();
         if (result0 === null) {
           result0 = parse_x_token();
         }
         return result0;
       }
-      
+
       function parse_x_token() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 2).toLowerCase() === "x-") {
           result0 = input.substr(pos, 2);
@@ -17524,21 +17524,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_m_subtype() {
         var result0;
-        
+
         result0 = parse_extension_token();
         if (result0 === null) {
           result0 = parse_token();
         }
         return result0;
       }
-      
+
       function parse_m_parameter() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -17561,21 +17561,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_m_value() {
         var result0;
-        
+
         result0 = parse_token();
         if (result0 === null) {
           result0 = parse_quoted_string();
         }
         return result0;
       }
-      
+
       function parse_CSeq() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_CSeq_value();
         if (result0 !== null) {
@@ -17598,11 +17598,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_CSeq_value() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_DIGIT();
         if (result1 !== null) {
@@ -17623,11 +17623,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Expires() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_delta_seconds();
         if (result0 !== null) {
@@ -17638,11 +17638,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Event() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_event_type();
@@ -17698,11 +17698,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_event_type() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_token_nodot();
         if (result0 !== null) {
@@ -17766,11 +17766,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_From() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SIP_URI_noparams();
@@ -17835,21 +17835,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_from_param() {
         var result0;
-        
+
         result0 = parse_tag_param();
         if (result0 === null) {
           result0 = parse_generic_param();
         }
         return result0;
       }
-      
+
       function parse_tag_param() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 3).toLowerCase() === "tag") {
@@ -17887,11 +17887,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Max_Forwards() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result1 = parse_DIGIT();
         if (result1 !== null) {
@@ -17912,11 +17912,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Min_Expires() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_delta_seconds();
         if (result0 !== null) {
@@ -17927,11 +17927,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Name_Addr_Header() {
         var result0, result1, result2, result3, result4, result5, result6;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = [];
@@ -18014,18 +18014,18 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Proxy_Authenticate() {
         var result0;
-        
+
         result0 = parse_challenge();
         return result0;
       }
-      
+
       function parse_challenge() {
         var result0, result1, result2, result3, result4, result5;
         var pos0, pos1;
-        
+
         pos0 = pos;
         if (input.substr(pos, 6).toLowerCase() === "digest") {
           result0 = input.substr(pos, 6);
@@ -18096,11 +18096,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_other_challenge() {
         var result0, result1, result2, result3, result4, result5;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -18160,11 +18160,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_auth_param() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -18190,10 +18190,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_digest_cln() {
         var result0;
-        
+
         result0 = parse_realm();
         if (result0 === null) {
           result0 = parse_domain();
@@ -18218,11 +18218,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_realm() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 5).toLowerCase() === "realm") {
           result0 = input.substr(pos, 5);
@@ -18253,11 +18253,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_realm_value() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_quoted_string_clean();
         if (result0 !== null) {
@@ -18268,11 +18268,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_domain() {
         var result0, result1, result2, result3, result4, result5, result6;
         var pos0, pos1;
-        
+
         pos0 = pos;
         if (input.substr(pos, 6).toLowerCase() === "domain") {
           result0 = input.substr(pos, 6);
@@ -18370,21 +18370,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_URI() {
         var result0;
-        
+
         result0 = parse_absoluteURI();
         if (result0 === null) {
           result0 = parse_abs_path();
         }
         return result0;
       }
-      
+
       function parse_nonce() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 5).toLowerCase() === "nonce") {
           result0 = input.substr(pos, 5);
@@ -18415,11 +18415,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_nonce_value() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_quoted_string_clean();
         if (result0 !== null) {
@@ -18430,11 +18430,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_opaque() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 6).toLowerCase() === "opaque") {
@@ -18472,11 +18472,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_stale() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         if (input.substr(pos, 5).toLowerCase() === "stale") {
           result0 = input.substr(pos, 5);
@@ -18540,11 +18540,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_algorithm() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 9).toLowerCase() === "algorithm") {
@@ -18605,11 +18605,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_qop_options() {
         var result0, result1, result2, result3, result4, result5, result6;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         if (input.substr(pos, 3).toLowerCase() === "qop") {
           result0 = input.substr(pos, 3);
@@ -18712,11 +18712,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_qop_value() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 8).toLowerCase() === "auth-int") {
           result0 = input.substr(pos, 8);
@@ -18751,11 +18751,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Proxy_Require() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -18803,11 +18803,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Record_Route() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_rec_route();
@@ -18875,11 +18875,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_rec_route() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_name_addr();
@@ -18948,11 +18948,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Require() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -19000,11 +19000,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Route() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_route_param();
         if (result0 !== null) {
@@ -19052,11 +19052,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_route_param() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_name_addr();
         if (result0 !== null) {
@@ -19104,11 +19104,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Subscription_State() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_substate_value();
         if (result0 !== null) {
@@ -19156,11 +19156,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_substate_value() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 6).toLowerCase() === "active") {
           result0 = input.substr(pos, 6);
@@ -19205,11 +19205,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_subexp_params() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 6).toLowerCase() === "reason") {
@@ -19327,10 +19327,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_event_reason_value() {
         var result0;
-        
+
         if (input.substr(pos, 11).toLowerCase() === "deactivated") {
           result0 = input.substr(pos, 11);
           pos += 11;
@@ -19411,19 +19411,19 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_Subject() {
         var result0;
-        
+
         result0 = parse_TEXT_UTF8_TRIM();
         result0 = result0 !== null ? result0 : "";
         return result0;
       }
-      
+
       function parse_Supported() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -19472,11 +19472,11 @@ JsSIP.Grammar = (function(){
         result0 = result0 !== null ? result0 : "";
         return result0;
       }
-      
+
       function parse_To() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_SIP_URI_noparams();
@@ -19541,21 +19541,21 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_to_param() {
         var result0;
-        
+
         result0 = parse_tag_param();
         if (result0 === null) {
           result0 = parse_generic_param();
         }
         return result0;
       }
-      
+
       function parse_Via() {
         var result0, result1, result2, result3;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_via_parm();
         if (result0 !== null) {
@@ -19603,11 +19603,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_parm() {
         var result0, result1, result2, result3, result4, result5;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_sent_protocol();
         if (result0 !== null) {
@@ -19667,10 +19667,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_params() {
         var result0;
-        
+
         result0 = parse_via_ttl();
         if (result0 === null) {
           result0 = parse_via_maddr();
@@ -19689,11 +19689,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_ttl() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 3).toLowerCase() === "ttl") {
@@ -19732,11 +19732,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_maddr() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 5).toLowerCase() === "maddr") {
@@ -19775,11 +19775,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_received() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 8).toLowerCase() === "received") {
@@ -19821,11 +19821,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_branch() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 6).toLowerCase() === "branch") {
@@ -19864,11 +19864,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_response_port() {
         var result0, result1, result2, result3;
         var pos0, pos1, pos2;
-        
+
         pos0 = pos;
         pos1 = pos;
         if (input.substr(pos, 5).toLowerCase() === "rport") {
@@ -19921,11 +19921,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_sent_protocol() {
         var result0, result1, result2, result3, result4;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_protocol_name();
         if (result0 !== null) {
@@ -19960,11 +19960,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_protocol_name() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 3).toLowerCase() === "sip") {
           result0 = input.substr(pos, 3);
@@ -19987,11 +19987,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_transport() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 3).toLowerCase() === "udp") {
           result0 = input.substr(pos, 3);
@@ -20047,11 +20047,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_sent_by() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_via_host();
         if (result0 !== null) {
@@ -20082,11 +20082,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_host() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_IPv4address();
         if (result0 === null) {
@@ -20104,11 +20104,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_via_port() {
         var result0, result1, result2, result3, result4;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_DIGIT();
@@ -20156,11 +20156,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_ttl() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_DIGIT();
@@ -20193,18 +20193,18 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_WWW_Authenticate() {
         var result0;
-        
+
         result0 = parse_challenge();
         return result0;
       }
-      
+
       function parse_extension_header() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_token();
         if (result0 !== null) {
@@ -20227,10 +20227,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_header_value() {
         var result0, result1;
-        
+
         result0 = [];
         result1 = parse_TEXT_UTF8char();
         if (result1 === null) {
@@ -20251,10 +20251,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_message_body() {
         var result0, result1;
-        
+
         result0 = [];
         result1 = parse_OCTET();
         while (result1 !== null) {
@@ -20263,11 +20263,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_stun_URI() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_stun_scheme();
         if (result0 !== null) {
@@ -20298,11 +20298,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_stun_scheme() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 5).toLowerCase() === "stuns") {
           result0 = input.substr(pos, 5);
@@ -20333,11 +20333,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_stun_host_port() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_stun_host();
         if (result0 !== null) {
@@ -20376,11 +20376,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_stun_host() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_IPv4address();
         if (result0 === null) {
@@ -20398,11 +20398,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_reg_name() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result0 = [];
         result1 = parse_stun_unreserved();
@@ -20431,10 +20431,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_stun_unreserved() {
         var result0;
-        
+
         result0 = parse_ALPHA();
         if (result0 === null) {
           result0 = parse_DIGIT();
@@ -20485,10 +20485,10 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_sub_delims() {
         var result0;
-        
+
         if (input.charCodeAt(pos) === 33) {
           result0 = "!";
           pos++;
@@ -20610,11 +20610,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_turn_URI() {
         var result0, result1, result2, result3, result4;
         var pos0, pos1;
-        
+
         pos0 = pos;
         result0 = parse_turn_scheme();
         if (result0 !== null) {
@@ -20673,11 +20673,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_turn_scheme() {
         var result0;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 5).toLowerCase() === "turns") {
           result0 = input.substr(pos, 5);
@@ -20708,11 +20708,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_turn_transport() {
         var result0, result1, result2;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_transport();
@@ -20764,11 +20764,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_uuid_URI() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         if (input.substr(pos, 5) === "uuid:") {
           result0 = "uuid:";
@@ -20793,11 +20793,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_uuid() {
         var result0, result1, result2, result3, result4, result5, result6, result7, result8;
         var pos0, pos1;
-        
+
         pos0 = pos;
         pos1 = pos;
         result0 = parse_hex8();
@@ -20896,11 +20896,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hex4() {
         var result0, result1, result2, result3;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_HEXDIG();
         if (result0 !== null) {
@@ -20929,11 +20929,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hex8() {
         var result0, result1;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_hex4();
         if (result0 !== null) {
@@ -20950,11 +20950,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
+
       function parse_hex12() {
         var result0, result1, result2;
         var pos0;
-        
+
         pos0 = pos;
         result0 = parse_hex4();
         if (result0 !== null) {
@@ -20977,11 +20977,11 @@ JsSIP.Grammar = (function(){
         }
         return result0;
       }
-      
-      
+
+
       function cleanupExpected(expected) {
         expected.sort();
-        
+
         var lastExpected = null;
         var cleanExpected = [];
         for (var i = 0; i < expected.length; i++) {
@@ -20992,7 +20992,7 @@ JsSIP.Grammar = (function(){
         }
         return cleanExpected;
       }
-      
+
       function computeErrorPosition() {
         /*
          * The first idea was to use |String.split| to break the input up to the
@@ -21000,11 +21000,11 @@ JsSIP.Grammar = (function(){
          * there. However IE's |split| implementation is so broken that it was
          * enough to prevent it.
          */
-        
+
         var line = 1;
         var column = 1;
         var seenCR = false;
-        
+
         for (var i = 0; i < Math.max(pos, rightmostFailuresPos); i++) {
           var ch = input.charAt(i);
           if (ch === "\n") {
@@ -21020,14 +21020,14 @@ JsSIP.Grammar = (function(){
             seenCR = false;
           }
         }
-        
+
         return { line: line, column: column };
       }
-      
-       var data = {}; 
-      
+
+       var data = {};
+
       var result = parseFunctions[startRule]();
-      
+
       /*
        * The parser is now in one of the following three states:
        *
@@ -21056,7 +21056,7 @@ JsSIP.Grammar = (function(){
         var offset = Math.max(pos, rightmostFailuresPos);
         var found = offset < input.length ? input.charAt(offset) : null;
         var errorPosition = computeErrorPosition();
-        
+
         new this.SyntaxError(
           cleanupExpected(rightmostFailuresExpected),
           found,
@@ -21066,20 +21066,20 @@ JsSIP.Grammar = (function(){
         );
         return -1;
       }
-      
+
       return data;
     },
-    
+
     /* Returns the parser source code. */
     toSource: function() { return this._source; }
   };
-  
+
   /* Thrown when a parser encounters a syntax error. */
-  
+
   result.SyntaxError = function(expected, found, offset, line, column) {
     function buildMessage(expected, found) {
       var expectedHumanized, foundHumanized;
-      
+
       switch (expected.length) {
         case 0:
           expectedHumanized = "end of input";
@@ -21092,12 +21092,12 @@ JsSIP.Grammar = (function(){
             + " or "
             + expected[expected.length - 1];
       }
-      
+
       foundHumanized = found ? quote(found) : "end of input";
-      
+
       return "Expected " + expectedHumanized + " but " + foundHumanized + " found.";
     }
-    
+
     this.name = "SyntaxError";
     this.expected = expected;
     this.found = found;
@@ -21106,9 +21106,9 @@ JsSIP.Grammar = (function(){
     this.line = line;
     this.column = column;
   };
-  
+
   result.SyntaxError.prototype = Error.prototype;
-  
+
   return result;
 })();
 
@@ -21338,7 +21338,7 @@ Object.keys(grammar).forEach(function (key) {
       obj.format = "%s";
     }
   });
-}); 
+});
 
 },{}],3:[function(require,module,exports){
 var toIntIfInt = function (v) {
@@ -21556,7 +21556,7 @@ module.exports = function (session, opts) {
  * @fileoverview SDP Parser
  *
  * https://github.com/clux/sdp-transform
- * 
+ *
  */
 
 (function(JsSIP) {

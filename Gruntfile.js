@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     myConf: myConf,
-    
+
     coffee: {
       options: {
         bare: true
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
         ]
       }
     },
-    
+
     concat: {
       build: {
         options: {
@@ -41,7 +41,7 @@ module.exports = function(grunt) {
         ]
       }
     },
-    
+
     uglify: {
       build: {
         files: {
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
         }
       }
     },
-    
+
     replace: {
       build: {
         src: ['oktell-voice.*'],
@@ -72,7 +72,7 @@ module.exports = function(grunt) {
         ]
       }
     },
-    
+
     connect: {
       server: {
         options: {
@@ -83,8 +83,8 @@ module.exports = function(grunt) {
       }
     }
   });
-  
+
   grunt.registerTask('build', ['replace', 'coffee:build', 'concat:build', 'uglify:build']);
-  
+
   grunt.registerTask('default', ['build']);
 };
