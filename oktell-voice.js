@@ -302,10 +302,15 @@
               if (_this.currentSession.getRemoteStreams().length > 0) {
                 log('currentSession remote stream > 0', _this.currentSession.getRemoteStreams()[0].getAudioTracks());
                 setStream(_this.elRemote, _this.currentSession.getRemoteStreams()[0]);
-                return _this.elRemote.play();
+                _this.elRemote.play();
               } else {
-                return log('currentSession remote stream == 0');
+                log('currentSession remote stream == 0');
               }
+              return _this.currentSession.rtcMediaHandler.peerConnection.addEventListener('addstream', function(e) {
+                log('addstream', e);
+                setStream(_this.elRemote, e.stream);
+                return _this.elRemote.play()["catch"]();
+              });
             };
             if (_this.currentSession.direction === 'incoming') {
               onSessionStart();

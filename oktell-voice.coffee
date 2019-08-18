@@ -211,6 +211,11 @@ window.oktellVoice = do ->
 					else
 						log 'currentSession remote stream == 0'
 
+					@currentSession.rtcMediaHandler.peerConnection.addEventListener 'addstream', (e) =>
+						log 'addstream', e
+						setStream @elRemote, e.stream
+						@elRemote.play().catch()
+
 				if @currentSession.direction is 'incoming'
 					onSessionStart()
 				else
