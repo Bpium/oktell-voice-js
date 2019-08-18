@@ -15,6 +15,7 @@
       args.unshift('Oktell-Voice.js |');
       return console.log.apply(console, args);
     };
+    log.error = console.error;
     eventSplitter = /\s+/;
     events = {
       on: function(eventNames, callback, context) {
@@ -142,6 +143,7 @@
         this.useWSS = useWSS;
         this.name = 'JsSIP account';
         this.currentSession = false;
+        this.holdedSession = false;
         this.connectedFired = false;
         if (this.sip && this.login && this.server && this.port) {
           this.constructed = true;
@@ -323,8 +325,12 @@
               log('currentSession ended');
               return _this.trigger('RTCSessionEnded', (ref = _this.currentSession.remote_identity) != null ? ref.display_name : void 0);
             });
-            return _this.currentSession.on('hold', function(e) {
+            _this.currentSession.on('hold', function(e) {
               return _this.holdedSession = _this.currentSession;
+            });
+            return _this.currentSession.on('unhold', function(e) {
+              _this.currentSession = _this.holdedSession;
+              return _this.holdedSession = false;
             });
           };
         })(this));

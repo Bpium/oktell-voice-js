@@ -5,6 +5,7 @@ window.oktellVoice = do ->
 		if not debugMode then return
 		args.unshift 'Oktell-Voice.js |'
 		console.log.apply console, args
+	log.error = console.error
 
 	eventSplitter = /\s+/
 	events =
@@ -93,6 +94,7 @@ window.oktellVoice = do ->
 			@useWSS         = useWSS
 			@name           = 'JsSIP account'
 			@currentSession = false
+			@holdedSession  = false
 			@connectedFired = false
 
 			if @sip and @login and @server and @port
@@ -228,6 +230,9 @@ window.oktellVoice = do ->
 				@currentSession.on 'hold', (e)=>
 					@holdedSession = @currentSession
 
+				@currentSession.on 'unhold', (e)=>
+					@currentSession = @holdedSession
+					@holdedSession = false
 
 				# incoming or outgoing session
 
